@@ -17,7 +17,7 @@ public class Main extends Application {
 	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/formpackage/mainform.fxml"));
 	        AnchorPane root = (AnchorPane) loader.load();
 	        Scene scene = new Scene(root, 800, 800);
-	        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+	        scene.getStylesheets().add(getClass().getResource("/formpackage/style.css").toExternalForm());
 	        primaryStage.initStyle(StageStyle.UNDECORATED);
 	        primaryStage.setScene(scene);        
 	        primaryStage.setTitle("Prova");
