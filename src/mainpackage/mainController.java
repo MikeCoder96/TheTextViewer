@@ -22,9 +22,9 @@ public class mainController {
     @FXML
     void tempOpenText(ActionEvent event) {
     	FileChooser fc = new FileChooser();
+    	textContentPane.getChildren().clear();
     	try {
     		textContentPane.getChildren().add(new TextFileViewer(fc.showOpenDialog(null)));
-    		
     		
     	} catch (Exception e) {
     		e.printStackTrace();
