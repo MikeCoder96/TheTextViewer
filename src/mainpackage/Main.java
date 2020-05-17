@@ -8,7 +8,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			sceneHandler.getInstance().init(primaryStage);
+			SceneHandler.getInstance().init(primaryStage);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
