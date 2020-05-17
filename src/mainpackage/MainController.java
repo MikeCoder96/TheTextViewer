@@ -4,19 +4,24 @@ import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import utilspackage.TaskCellFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 
 public class MainController {
 
+	private boolean mouseDragOnDivider = false;
+	
 	private ArrayList<String> books = new ArrayList<String>();
-	private TreeItem<String> rootItem;
+	private TreeItem rootItem;
 	
 	@FXML
-	private TreeView<String> treeView1;
+	private TreeView treeView1;
 	
 	@FXML
 	private SplitPane splitPane1;
@@ -26,18 +31,13 @@ public class MainController {
     
     @FXML
     void initialize(){
-    	treeView1.setCellFactory(new TaskCellFactory());
-    	rootItem = new TreeItem<String>("Books");
+    	rootItem = new TreeItem("Books");
     	treeView1.setRoot(rootItem);
-    	rootItem.setExpanded(true);
-        
     	addBooks("a");
     	addBooks("B");
     	addBooks("c");
     	addBooks("D");
     	addBooks("e");
-    	
-
     	
     	showBooksToTreeView();
     }
@@ -48,7 +48,7 @@ public class MainController {
     
     void showBooksToTreeView() {
     	for (int i = 0; i < books.size(); i++) {
-    		TreeItem<String> item = new TreeItem<String>(books.get(i));
+    		TreeItem item = new TreeItem(books.get(i));
     		rootItem.getChildren().add(item);
     	}
     }
