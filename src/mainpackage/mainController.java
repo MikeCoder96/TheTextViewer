@@ -22,9 +22,10 @@ public class mainController {
     @FXML
     void tempOpenText(ActionEvent event) {
     	FileChooser fc = new FileChooser();
-    	textContentPane.getChildren().clear();
     	try {
     		TextFileViewer tfv = new TextFileViewer(fc.showOpenDialog(null));
+    		textContentPane.getChildren().clear();
+    		//set to fill AnchorPane
     		AnchorPane.setBottomAnchor(tfv, 0.0);
     		AnchorPane.setLeftAnchor(tfv, 0.0);
     		AnchorPane.setTopAnchor(tfv, 0.0);
