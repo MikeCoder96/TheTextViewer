@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
@@ -11,10 +12,14 @@ import javafx.scene.control.TreeView;
 import utilspackage.CellFactoryAdvanced;
 
 public class MainController {
-
+	
 	private ArrayList<String> books = new ArrayList<String>();
 	private TreeItem<String> rootItem;
 
+    @FXML
+    private ContextMenu contextMenu1;
+    private ContextMenu contextMenu2;
+	
 	@FXML
 	private TreeView<String> treeView1;
 
@@ -24,6 +29,14 @@ public class MainController {
 	@FXML
 	private MenuItem settingsButton;
 
+    @FXML
+    private MenuItem menuItem1;
+
+    @FXML
+    void onCreateCategory(ActionEvent event) {
+    	
+    }
+	
 	@FXML
 	void initialize() {
 		rootItem = new TreeItem<String>("Books");

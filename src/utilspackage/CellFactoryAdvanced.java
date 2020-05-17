@@ -2,6 +2,10 @@ package utilspackage;
 
 import java.util.Objects;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -18,7 +22,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
     private static final String DROP_HINT_STYLE = "-fx-border-color: #eea82f; -fx-border-width: 0 0 2 0; -fx-padding: 3 3 1 3";
     private TreeCell<String> dropZone;
     private TreeItem<String> draggedItem;
-
+    
     @Override
     public TreeCell<String> call(TreeView<String> treeView) {
         TreeCell<String> cell = new TreeCell<String>() {
@@ -30,7 +34,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
                 	setGraphic(null);
                 	return;
                 }
-
+                setContextMenu(new ContextMenuTextCell(this));
                 setText(item);
             }
         };
@@ -41,7 +45,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
         
         return cell;
     }
-
+    
     private void dragDetected(MouseEvent event, TreeCell<String> treeCell, TreeView<String> treeView) {
         draggedItem = treeCell.getTreeItem();
 
