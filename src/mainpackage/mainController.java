@@ -3,7 +3,7 @@ package mainpackage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 
 public class mainController {
@@ -12,7 +12,7 @@ public class mainController {
     private MenuItem settingsButton;
 
     @FXML
-    private Pane textContentPane;
+    private AnchorPane textContentPane;
     
     @FXML
     void openSettings(ActionEvent event) throws Exception {
@@ -24,7 +24,12 @@ public class mainController {
     	FileChooser fc = new FileChooser();
     	textContentPane.getChildren().clear();
     	try {
-    		textContentPane.getChildren().add(new TextFileViewer(fc.showOpenDialog(null)));
+    		TextFileViewer tfv = new TextFileViewer(fc.showOpenDialog(null));
+    		AnchorPane.setBottomAnchor(tfv, 0.0);
+    		AnchorPane.setLeftAnchor(tfv, 0.0);
+    		AnchorPane.setTopAnchor(tfv, 0.0);
+    		AnchorPane.setRightAnchor(tfv, 0.0);
+    		textContentPane.getChildren().add(tfv);
     		
     	} catch (Exception e) {
     		e.printStackTrace();
