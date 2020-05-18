@@ -2,10 +2,8 @@ package utilspackage;
 
 import java.util.Objects;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -13,6 +11,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.util.Callback;
@@ -26,12 +26,53 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
     @Override
     public TreeCell<String> call(TreeView<String> treeView) {
         TreeCell<String> cell = new TreeCell<String>() {
+            private TextField textField;
+            
+            private String getString() {
+                return getItem() == null ? "" : getItem().toString();
+            }
+            
+            private void createTextField() {
+                textField = new TextField(getString());
+                textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+                    @Override
+                    public void handle(KeyEvent t) {
+                        if (t.getCode() == KeyCode.ENTER) {
+                            commitEdit(textField.getText());
+                        } else if (t.getCode() == KeyCode.ESCAPE) {
+                            cancelEdit();
+                        }
+                    }
+                });
+            }
+            
+        	@Override
+            public void startEdit() {
+                super.startEdit();
+
+                if (textField == null) {
+                    createTextField();
+                }
+                setText(null);
+                setGraphic(textField);
+                textField.selectAll();
+            }
+
+            @Override
+            public void cancelEdit() {
+                super.cancelEdit();
+                setText((String) getItem());
+                setGraphic(getTreeItem().getGraphic());
+            }
+        	
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                 	setText(null);
                 	setGraphic(null);
+                	setContextMenu(null);
                 	return;
                 }
                 setContextMenu(new ContextMenuTextCell(this));
@@ -50,7 +91,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
         draggedItem = treeCell.getTreeItem();
 
         // root can't be dragged
-        if (draggedItem.getParent() == null) return;
+        if (draggedItem == null || draggedItem.getParent() == null) return;
         Dragboard db = treeCell.startDragAndDrop(TransferMode.MOVE);
 
         ClipboardContent content = new ClipboardContent();

@@ -18,9 +18,7 @@ public class MainController {
 
     @FXML
     private ContextMenu contextMenu1;
-    private ContextMenu contextMenu2;
-	
-	@FXML
+    @FXML
 	private TreeView<String> treeView1;
 
 	@FXML
@@ -41,33 +39,33 @@ public class MainController {
 	void initialize() {
 		rootItem = new TreeItem<String>("Books");
 		treeView1.setRoot(rootItem);
-
-		/*treeView1.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {
-
-			@Override
-			public TreeCell<String> call(TreeView<String> param) {
-				TreeCell<String> newcell = new TreeCell<String>() {
-					@Override
-					protected void updateItem(String item, boolean empty) {
-						super.updateItem(item, empty);
-						if (item == null || empty){
-							setText("");
-							setGraphic(null);
-							return;
-						}
-						setText(item);
-					}
-				};
-				return newcell;
-			}
-		});*/
+		treeView1.setShowRoot(false);
+		treeView1.setEditable(true);
 		treeView1.setCellFactory(new CellFactoryAdvanced());
 		
 		addBooks("a");
 		addBooks("B");
 		addBooks("c");
 		addBooks("D");
+		addBooks("t");
+		addBooks("w");
 		addBooks("e");
+		addBooks("r");
+		addBooks("y");
+		addBooks("u");
+		addBooks("i");
+		addBooks("o");
+		addBooks("p");
+		addBooks("1");
+		addBooks("2");
+		addBooks("3");
+		addBooks("4");
+		addBooks("5");
+		addBooks("6");
+		addBooks("7");
+		addBooks("8");
+		addBooks("9");
+		
 
 		showBooksToTreeView();
 	}
