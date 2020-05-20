@@ -6,12 +6,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mainpackage.sceneHandler;
+import mainpackage.SceneHandler;
 import utilspackage.MainFormSettings;
-import utilspackage.utils;
+import utilspackage.Utils;
 
-public class sceneHandler {
-	private static sceneHandler SH = null;
+public class SceneHandler {
+	private static SceneHandler SH = null;
 	private Stage stage;
 	private Scene mainscene, settingsscene;
 	
@@ -23,9 +23,9 @@ public class sceneHandler {
 		return settingsscene;
 	}
 	
-	public static sceneHandler getInstance() {
+	public static SceneHandler getInstance() {
 		  if (SH == null)
-			  SH = new sceneHandler(); 
+			  SH = new SceneHandler(); 
 		    return SH;
 	}
 	
@@ -44,8 +44,8 @@ public class sceneHandler {
 		Scene scenes = new Scene(root);
 		mainscene = scenes;
 		
-		mainscene.getStylesheets().add(getClass().getResource(utils.WHITETHEME).toExternalForm());
-		mainscene.getStylesheets().add(getClass().getResource(utils.DARKTHEME).toExternalForm());
+		mainscene.getStylesheets().add(getClass().getResource(Utils.WHITETHEME).toExternalForm());
+		mainscene.getStylesheets().add(getClass().getResource(Utils.DARKTHEME).toExternalForm());
 		stage.setScene(mainscene);
 		//set stage size bounds
 		stage.setMinHeight(MainFormSettings.MINHEIGHT);
@@ -62,8 +62,8 @@ public class sceneHandler {
 	    stage.initModality(Modality.APPLICATION_MODAL);
 	    Scene tmpScene = new Scene(root, 400.0D, 400.0D);
 	    settingsscene = tmpScene;
-	    settingsscene.getStylesheets().add(getClass().getResource(utils.WHITETHEME).toExternalForm());
-	    settingsscene.getStylesheets().add(getClass().getResource(utils.DARKTHEME).toExternalForm());
+	    settingsscene.getStylesheets().add(getClass().getResource(Utils.WHITETHEME).toExternalForm());
+	    settingsscene.getStylesheets().add(getClass().getResource(Utils.DARKTHEME).toExternalForm());
 	    //tmpScene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 	    stage.setScene(settingsscene);
 	    stage.showAndWait();

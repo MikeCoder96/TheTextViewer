@@ -6,7 +6,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 
-public class mainController {
+public class MainController {
 
     @FXML
     private MenuItem settingsButton;
@@ -16,7 +16,7 @@ public class mainController {
     
     @FXML
     void openSettings(ActionEvent event) throws Exception {
-    	sceneHandler.getInstance().getSettingsWindow();
+    	SceneHandler.getInstance().getSettingsWindow();
     }
     
     @FXML
