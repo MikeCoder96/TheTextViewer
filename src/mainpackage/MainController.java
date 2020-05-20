@@ -10,6 +10,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import utilspackage.CellFactoryAdvanced;
+import utilspackage.TreeCategory;
 
 public class MainController {
 	
@@ -30,11 +31,6 @@ public class MainController {
     @FXML
     private MenuItem menuItem1;
 
-    @FXML
-    void onCreateCategory(ActionEvent event) {
-    	
-    }
-	
 	@FXML
 	void initialize() {
 		rootItem = new TreeItem<String>("Books");
@@ -43,6 +39,8 @@ public class MainController {
 		treeView1.setEditable(true);
 		treeView1.setCellFactory(new CellFactoryAdvanced());
 		
+		
+		
 		addBooks("a");
 		addBooks("B");
 		addBooks("c");
@@ -50,7 +48,7 @@ public class MainController {
 		addBooks("t");
 		addBooks("w");
 		addBooks("e");
-		addBooks("r");
+		/*addBooks("r");
 		addBooks("y");
 		addBooks("u");
 		addBooks("i");
@@ -65,7 +63,7 @@ public class MainController {
 		addBooks("7");
 		addBooks("8");
 		addBooks("9");
-		
+		*/
 
 		showBooksToTreeView();
 	}
@@ -86,4 +84,9 @@ public class MainController {
 		SceneHandler.getInstance().getSettingsWindow();
 	}
 
+	@FXML
+	void onCreateCategory(ActionEvent event) {
+		TreeCategory prova = new TreeCategory("Inserisci nome");
+		rootItem.getChildren().add(prova);
+	}
 }
