@@ -9,6 +9,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import utilspackage.CellFactoryAdvanced;
 import utilspackage.TreeCategory;
 
@@ -21,7 +23,8 @@ public class MainController {
     private ContextMenu contextMenu1;
     @FXML
 	private TreeView<String> treeView1;
-
+    @FXML
+    private AnchorPane textContentPane;
 	@FXML
 	private SplitPane splitPane1;
 
@@ -89,4 +92,22 @@ public class MainController {
 		TreeCategory prova = new TreeCategory("Inserisci nome");
 		rootItem.getChildren().add(prova);
 	}
+	
+	@FXML
+    void tempOpenText(ActionEvent event) {
+    	FileChooser fc = new FileChooser();
+    	try {
+    		TextFileViewer tfv = new TextFileViewer(fc.showOpenDialog(null));
+    		textContentPane.getChildren().clear();
+    		//set to fill AnchorPane
+    		AnchorPane.setBottomAnchor(tfv, 0.0);
+    		AnchorPane.setLeftAnchor(tfv, 0.0);
+    		AnchorPane.setTopAnchor(tfv, 0.0);
+    		AnchorPane.setRightAnchor(tfv, 0.0);
+    		textContentPane.getChildren().add(tfv);
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
 }
