@@ -34,12 +34,14 @@ public class TextFileViewer extends TextArea{
 			private int upperbound = 10;
 			@Override
 			public void handle(ScrollEvent event) {
-				if(event.getDeltaY() > 0.0 && fontsize < upperbound) {
-					fontsize++;
-				} else  if (fontsize > lowerbound){
-					fontsize--;
+				if(event.isControlDown()) {
+					if(event.getDeltaY() > 0.0 && fontsize < upperbound) {
+						fontsize++;
+					} else  if (fontsize > lowerbound){
+						fontsize--;
+					}
+					pointToSelf.setStyle("-fx-font-size:" + fontsize +"em");
 				}
-				pointToSelf.setStyle("-fx-font-size:" + fontsize +"em");
 			}
 		});
 	}
