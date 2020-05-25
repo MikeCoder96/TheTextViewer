@@ -4,12 +4,13 @@ import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -21,6 +22,8 @@ public class MainController {
 
 	private TreeItem<String> rootItem;
 
+    @FXML
+    private TextField textField1;	
 	@FXML
 	private ContextMenu contextMenu1;
 	@FXML
@@ -78,6 +81,13 @@ public class MainController {
 
 	}
 
+    @FXML
+    void searchBook(KeyEvent event) {
+    	//TreeItem<String> tmpSearch = new TreeItem<String>();
+    	//treeView1.setRoot(null);	
+    	
+    }
+	
 	@FXML
 	void openSettings(ActionEvent event) throws Exception {
 		SceneHandler.getInstance().getSettingsWindow();

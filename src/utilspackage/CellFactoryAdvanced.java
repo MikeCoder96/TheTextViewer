@@ -175,6 +175,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
 
     //remove previously applied styles
     private void clearDropLocation() {
-        if (dropZone != null) dropZone.setStyle("");
+        if (dropZone != null) 
+        	dropZone.setStyle("");
     }
 }

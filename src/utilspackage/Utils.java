@@ -1,6 +1,7 @@
 package utilspackage;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Utils {
@@ -21,4 +22,12 @@ public class Utils {
 	public static File getBookFromTitle(String title) {
 		return books.get(title);
 	}
+	
+	/*public static ArrayList<String> searchBooksFromWords(String text){
+		ArrayList<String> tmp = new ArrayList<String>();
+		for (String x : books.keySet()) {
+			
+		}
+		return tmp;
+	}*/
 }
