@@ -2,6 +2,7 @@ package mainpackage;
 
 import java.io.File;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
@@ -10,7 +11,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -52,6 +56,39 @@ public class MainController {
 	@FXML
 	void initialize() {
 		rootItem = new TreeItem<String>("Books");
+		treeView1.setOnDragOver(new EventHandler<DragEvent>() {
+
+            @Override
+            public void handle(DragEvent event) {
+                if (treeView1.getRoot() != null && event.getGestureSource() != rootItem
+                        && event.getDragboard().hasFiles()) {
+                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+                event.consume();
+            }
+        });
+		
+		treeView1.setOnDragDropped(new EventHandler<DragEvent>() {
+
+            @Override
+            public void handle(DragEvent event) {
+            	//We use dragboard "a java clipboard class" to store the files
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.hasFiles()) {
+                    for (File fl : db.getFiles()) {
+                    	addBooks(fl.getName(), fl);
+                    }
+                    //we set the variable to true when we release the mouse click
+                	success = true;
+                }
+                //here is end of the drag event
+                event.setDropCompleted(success);
+
+                event.consume();
+            }
+        });
+		
 		treeView1.setRoot(rootItem);
 		treeView1.setShowRoot(false);
 		treeView1.setEditable(true);
