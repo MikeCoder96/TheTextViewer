@@ -1,6 +1,8 @@
 package mainpackage;
 
 import java.io.File;
+
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -9,23 +11,23 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import utilspackage.CellFactoryAdvanced;
+import utilspackage.FilterableTreeItem;
 import utilspackage.TreeCategory;
+import utilspackage.TreeItemPredicate;
 import utilspackage.Utils;
 
 public class MainController {
 
-	private TreeItem<String> rootItem;
-
+	private FilterableTreeItem<String> rootItem;
+	
     @FXML
     private TextField textField1;	
 	@FXML
@@ -55,7 +57,16 @@ public class MainController {
 
 	@FXML
 	void initialize() {
-		rootItem = new TreeItem<String>("Books");
+		/*
+		 * using FilterableTreeItem to support incremental search
+		 * from now on use getInternalChildren to get the filtered items
+		 */
+		rootItem = new FilterableTreeItem<String>("Books");
+		rootItem.predicateProperty().bind(Bindings.createObjectBinding(() -> {
+			if(textField1.getText() == null || textField1.getText().isEmpty())
+				return null;
+			return TreeItemPredicate.create(s -> s.contains(textField1.getText()));
+		}, textField1.textProperty()));
 		treeView1.setOnDragOver(new EventHandler<DragEvent>() {
 
             @Override
@@ -93,6 +104,7 @@ public class MainController {
 		treeView1.setShowRoot(false);
 		treeView1.setEditable(true);
 		treeView1.setCellFactory(new CellFactoryAdvanced());
+		//TODO try to understand how to handle this but with filterabletreeitem so it does not cause exceptions
 		treeView1.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> 
 		{
 			OpenText(newValue.getValue());
@@ -105,8 +117,8 @@ public class MainController {
 		
 		if (res)
 		{
-			TreeItem<String> item = new TreeItem<String>(Title);
-			rootItem.getChildren().add(item);
+			FilterableTreeItem<String> item = new FilterableTreeItem<String>(Title);
+			rootItem.getInternalChildren().add(item);
 		}
 		else
 		{
@@ -117,13 +129,6 @@ public class MainController {
 		}
 
 	}
-
-    @FXML
-    void searchBook(KeyEvent event) {
-    	//TreeItem<String> tmpSearch = new TreeItem<String>();
-    	//treeView1.setRoot(null);	
-    	
-    }
 	
 	@FXML
 	void openSettings(ActionEvent event) throws Exception {
@@ -133,7 +138,7 @@ public class MainController {
 	@FXML
 	void onCreateCategory(ActionEvent event) {
 		TreeCategory prova = new TreeCategory("Inserisci nome");
-		rootItem.getChildren().add(prova);
+		rootItem.getInternalChildren().add(prova);
 	}
 
 	void OpenText(String title) {

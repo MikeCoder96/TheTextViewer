@@ -24,7 +24,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
     private static final DataFormat JAVA_FORMAT = new DataFormat("application/x-java-serialized-object");
     private static final String DROP_HINT_STYLE = "-fx-border-color: #eea82f; -fx-border-width: 0 0 2 0; -fx-padding: 3 3 1 3";
     private TreeCell<String> dropZone;
-    private TreeItem<String> draggedItem;
+    private FilterableTreeItem<String> draggedItem;
     
     @Override
     public TreeCell<String> call(TreeView<String> treeView) {
@@ -94,7 +94,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
     }
     
     private void dragDetected(MouseEvent event, TreeCell<String> treeCell, TreeView<String> treeView) {
-        draggedItem = treeCell.getTreeItem();
+        draggedItem = (FilterableTreeItem<String>) treeCell.getTreeItem();
 
         // root can't be dragged
         if (draggedItem == null || draggedItem.getParent() == null) return;
@@ -145,28 +145,28 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
         boolean success = false;
         if (!db.hasContent(JAVA_FORMAT)) return;
 
-        TreeItem<String> thisItem = treeCell.getTreeItem();
-        TreeItem<String> droppedItemParent = draggedItem.getParent();
+        FilterableTreeItem<String> thisItem = (FilterableTreeItem<String>) treeCell.getTreeItem();
+        FilterableTreeItem<String> droppedItemParent = (FilterableTreeItem<String>) draggedItem.getParent();
         //handle dropping node inside of itself
         if (Objects.equals(draggedItem, thisItem.getParent()))
         	return;
         // remove from previous location
-        droppedItemParent.getChildren().remove(draggedItem);
+        droppedItemParent.getInternalChildren().remove(draggedItem);
         
         //handle drop inside an empty category
         if (dType == DropType.INTO && thisItem instanceof TreeCategory) {
-        	thisItem.getChildren().add(draggedItem);
+        	thisItem.getInternalChildren().add(draggedItem);
         }
         else {
 	        // dropping on parent node makes it the first child
 	        if (Objects.equals(droppedItemParent, thisItem)) {
-	            thisItem.getChildren().add(0, draggedItem);
+	            thisItem.getInternalChildren().add(0, draggedItem);
 	            treeView.getSelectionModel().select(draggedItem);
 	        }
 	        else {
 	            // add to new location
-	            int indexInParent = thisItem.getParent().getChildren().indexOf(thisItem);
-	            thisItem.getParent().getChildren().add(indexInParent + 1, draggedItem);
+	            int indexInParent = ((FilterableTreeItem<String>) thisItem.getParent()).getInternalChildren().indexOf(thisItem);
+	            ((FilterableTreeItem<String>) thisItem.getParent()).getInternalChildren().add(indexInParent + 1, draggedItem);
 	        }
         }
         treeView.getSelectionModel().select(draggedItem);
