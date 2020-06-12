@@ -13,15 +13,12 @@ import utilspackage.Utils;
 public class SceneHandler {
 	private static SceneHandler SH = null;
 	private Stage stage;
-	private Scene mainscene, settingsscene;
+	private Scene mainscene;
 	
 	public Scene getMainScene() {
 		return mainscene;
 	}
 	
-	public Scene getSettingsScene() {
-		return settingsscene;
-	}
 	
 	public static SceneHandler getInstance() {
 		  if (SH == null)
@@ -52,21 +49,6 @@ public class SceneHandler {
 		stage.setMinWidth(MainFormSettings.MINWIDTH);
 		stage.setMaxHeight(MainFormSettings.MAXHEIGHT);
 		stage.setMaxWidth(MainFormSettings.MAXWIDTH);
-	}
-	
-	public void getSettingsWindow() throws Exception{
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/formpackage/settingsform.fxml"));
-		AnchorPane root = (AnchorPane)loader.load();
-	    Stage stage = new Stage();
-	    stage.setResizable(true);
-	    stage.initModality(Modality.APPLICATION_MODAL);
-	    Scene tmpScene = new Scene(root, 400.0D, 400.0D);
-	    settingsscene = tmpScene;
-	    settingsscene.getStylesheets().add(getClass().getResource(Utils.WHITETHEME).toExternalForm());
-	    settingsscene.getStylesheets().add(getClass().getResource(Utils.DARKTHEME).toExternalForm());
-	    //tmpScene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-	    stage.setScene(settingsscene);
-	    stage.showAndWait();
 	}
 	
 }

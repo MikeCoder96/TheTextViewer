@@ -19,7 +19,6 @@
                 <Menu mnemonicParsing="false" text="File">
                   <items>
                         <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="Open" />
-                        <MenuItem fx:id="settingsButton" mnemonicParsing="false" onAction="#openSettings" text="Settings" />
                     <MenuItem mnemonicParsing="false" text="Close" />
                   </items>
                 </Menu>
@@ -28,6 +27,12 @@
                     <MenuItem mnemonicParsing="false" text="Delete" />
                   </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="Theme">
+                     <items>
+                        <MenuItem fx:id="darkBtn" mnemonicParsing="false" onAction="#ChangeTheme" text="Dark Mode" />
+                        <MenuItem fx:id="whiteBtn" mnemonicParsing="false" onAction="#ChangeTheme" text="White Mode" />
+                     </items>
+                  </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
                     <MenuItem mnemonicParsing="false" text="About" />
