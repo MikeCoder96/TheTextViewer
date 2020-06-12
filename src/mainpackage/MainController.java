@@ -140,29 +140,17 @@ public class MainController {
 	}
 
 	@FXML
-	void ChangeTheme(ActionEvent event) {
-		System.out.print("Test");
-		if (theme.equals("White")) {
-			setDarkMode();
-		} else {
-			setWhiteMode();
-		}
-	}
-
 	void setDarkMode() {
 		SceneHandler.getInstance().getMainScene().getStylesheets().remove(Utils.WHITETHEME);
 		if (!SceneHandler.getInstance().getMainScene().getStylesheets().contains(Utils.DARKTHEME))
 			SceneHandler.getInstance().getMainScene().getStylesheets().add(Utils.DARKTHEME);
-
-		theme = "Dark";
 	}
 
+	@FXML
 	void setWhiteMode() {
 		SceneHandler.getInstance().getMainScene().getStylesheets().remove(Utils.DARKTHEME);
 		if (!SceneHandler.getInstance().getMainScene().getStylesheets().contains(Utils.WHITETHEME))
 			SceneHandler.getInstance().getMainScene().getStylesheets().add(Utils.WHITETHEME);
-
-		theme = "White";
 	}
 
 	void OpenText(String title) {
