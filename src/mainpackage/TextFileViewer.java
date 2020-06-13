@@ -10,24 +10,24 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.ScrollEvent;
 
 public class TextFileViewer extends TextArea{
-	private File textfile;
 	private int fontsize;
-	private TextFileViewer pointToSelf;
 	
 	public TextFileViewer(File in) throws IOException {
 		super();
-		this.setEditable(false);
-		textfile = in;
-		BufferedReader br = new BufferedReader(new FileReader(textfile));
+		setEditable(false);
+		BufferedReader br = new BufferedReader(new FileReader(in));
 		while(br.ready()) {
-			this.appendText(br.readLine());
-			this.appendText(System.lineSeparator());
+			appendText(br.readLine());
+			appendText(System.lineSeparator());
 		}
 		br.close();
 		fontsize = 1;
-		//this.setFont(new Font(50));
-		this.setStyle("-fx-font-size:" + fontsize +"em");
-		pointToSelf = this;
+		setStyle("-fx-font-size:" + fontsize +"em");
+		
+		/*
+		 * Control + scroll to change
+		 * the fontsize "zoom"
+		 */
 		this.addEventHandler(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
 			
 			private int lowerbound = 0;
@@ -40,7 +40,7 @@ public class TextFileViewer extends TextArea{
 					} else  if (fontsize > lowerbound){
 						fontsize--;
 					}
-					pointToSelf.setStyle("-fx-font-size:" + fontsize +"em");
+					setStyle("-fx-font-size:" + fontsize +"em");
 				}
 			}
 		});

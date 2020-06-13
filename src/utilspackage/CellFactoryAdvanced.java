@@ -18,21 +18,21 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.util.Callback;
 
-public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<String>> {
+public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Book>> {
 	private enum DropType {INTO, REORDER};
     private DropType dType;
     private static final DataFormat JAVA_FORMAT = new DataFormat("application/x-java-serialized-object");
     private static final String DROP_HINT_STYLE = "-fx-border-color: #eea82f; -fx-border-width: 0 0 2 0; -fx-padding: 3 3 1 3";
-    private TreeCell<String> dropZone;
-    private FilterableTreeItem<String> draggedItem;
+    private TreeCell<Book> dropZone;
+    private FilterableTreeItem<Book> draggedItem;
     
     @Override
-    public TreeCell<String> call(TreeView<String> treeView) {
-        TreeCell<String> cell = new TreeCell<String>() {
+    public TreeCell<Book> call(TreeView<Book> treeView) {
+        TreeCell<Book> cell = new TreeCell<Book>() {
             private TextField textField;
             
             private String getString() {
-                return getItem() == null ? "" : getItem().toString();
+                return getItem() == null ? "" : getItem().getTitle();
             }
             
             private void createTextField() {
@@ -44,7 +44,10 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
                     public void handle(KeyEvent t) {
                     	//submit edit with ENTER cancel with ESCAPE
                         if (t.getCode() == KeyCode.ENTER) {
-                            commitEdit(textField.getText());
+                        	Book b = new Book(textField.getText(), getItem().getPath());
+                        	//getItem().setTitle(textField.getText());
+                        	//cancelEdit();
+                            commitEdit(b);
                         } else if (t.getCode() == KeyCode.ESCAPE) {
                             cancelEdit();
                         }
@@ -67,13 +70,13 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
             @Override
             public void cancelEdit() {
                 super.cancelEdit();
-                setText((String) getItem());
+                setText(getItem().getTitle());
                 setGraphic(getTreeItem().getGraphic());
             }
         	
             //update TreeCell on expand/move/delete/reorder
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(Book item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                 	setText(null);
@@ -82,7 +85,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
                 	return;
                 }
                 setContextMenu(new ContextMenuTextCell(this));
-                setText(item);
+                setText(item.getTitle());
             }
         };
         cell.setOnDragDetected((MouseEvent event) -> dragDetected(event, cell, treeView));
@@ -93,8 +96,8 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
         return cell;
     }
     
-    private void dragDetected(MouseEvent event, TreeCell<String> treeCell, TreeView<String> treeView) {
-        draggedItem = (FilterableTreeItem<String>) treeCell.getTreeItem();
+    private void dragDetected(MouseEvent event, TreeCell<Book> treeCell, TreeView<Book> treeView) {
+        draggedItem = (FilterableTreeItem<Book>) treeCell.getTreeItem();
 
         // root can't be dragged
         if (draggedItem == null || draggedItem.getParent() == null) return;
@@ -107,9 +110,9 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
         event.consume();
     }
 
-    private void dragOver(DragEvent event, TreeCell<String> treeCell, TreeView<String> treeView) {
+    private void dragOver(DragEvent event, TreeCell<Book> treeCell, TreeView<Book> treeView) {
         if (!event.getDragboard().hasContent(JAVA_FORMAT)) return;
-        TreeItem<String> thisItem = treeCell.getTreeItem();
+        TreeItem<Book> thisItem = treeCell.getTreeItem();
 
         // can't drop on itself
         if (draggedItem == null || thisItem == null || thisItem == draggedItem) return;
@@ -140,13 +143,13 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
         }
     }
 
-    private void drop(DragEvent event, TreeCell<String> treeCell, TreeView<String> treeView) {
+    private void drop(DragEvent event, TreeCell<Book> treeCell, TreeView<Book> treeView) {
         Dragboard db = event.getDragboard();
         boolean success = false;
         if (!db.hasContent(JAVA_FORMAT)) return;
 
-        FilterableTreeItem<String> thisItem = (FilterableTreeItem<String>) treeCell.getTreeItem();
-        FilterableTreeItem<String> droppedItemParent = (FilterableTreeItem<String>) draggedItem.getParent();
+        FilterableTreeItem<Book> thisItem = (FilterableTreeItem<Book>) treeCell.getTreeItem();
+        FilterableTreeItem<Book> droppedItemParent = (FilterableTreeItem<Book>) draggedItem.getParent();
         //handle dropping node inside of itself
         if (Objects.equals(draggedItem, thisItem.getParent()))
         	return;
@@ -165,8 +168,8 @@ public class CellFactoryAdvanced implements Callback<TreeView<String>, TreeCell<
 	        }
 	        else {
 	            // add to new location
-	            int indexInParent = ((FilterableTreeItem<String>) thisItem.getParent()).getInternalChildren().indexOf(thisItem);
-	            ((FilterableTreeItem<String>) thisItem.getParent()).getInternalChildren().add(indexInParent + 1, draggedItem);
+	            int indexInParent = ((FilterableTreeItem<Book>) thisItem.getParent()).getInternalChildren().indexOf(thisItem);
+	            ((FilterableTreeItem<Book>) thisItem.getParent()).getInternalChildren().add(indexInParent + 1, draggedItem);
 	        }
         }
         treeView.getSelectionModel().select(draggedItem);

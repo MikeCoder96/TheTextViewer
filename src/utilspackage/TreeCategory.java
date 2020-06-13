@@ -1,7 +1,7 @@
 package utilspackage;
 
-public class TreeCategory extends FilterableTreeItem<String>{
+public class TreeCategory extends FilterableTreeItem<Book>{
 	public TreeCategory(String label) {
-		super(label);
+		super(new Book(label));
 	}
 }

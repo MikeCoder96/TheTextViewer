@@ -11,9 +11,9 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 
 public class ContextMenuTextCell extends ContextMenu{
-	private TreeCell<String> object;
+	private TreeCell<Book> object;
 	
-	public ContextMenuTextCell(TreeCell<String> obj) {
+	public ContextMenuTextCell(TreeCell<Book> obj) {
 		super();
 		object = obj;
 		MenuItem editName = new MenuItem("Edit Title");
@@ -29,8 +29,8 @@ public class ContextMenuTextCell extends ContextMenu{
 			
 			@Override
 			public void handle(ActionEvent event) {
-				String title = object.getItem();
-				TreeItem<String> toDelete = object.getTreeItem();
+				String title = object.getItem().getTitle();
+				TreeItem<Book> toDelete = object.getTreeItem();
 				Boolean isDeleted = toDelete.getParent().getChildren().remove(toDelete);
 				if (isDeleted)
 				{

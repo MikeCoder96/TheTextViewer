@@ -1,6 +1,10 @@
 package mainpackage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.jdom2.JDOMException;
 
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -19,15 +23,17 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import utilspackage.Book;
 import utilspackage.CellFactoryAdvanced;
 import utilspackage.FilterableTreeItem;
 import utilspackage.TreeCategory;
 import utilspackage.TreeItemPredicate;
 import utilspackage.Utils;
+import utilspackage.XmlHandler;
 
 public class MainController {
 
-	private FilterableTreeItem<String> rootItem;
+	private FilterableTreeItem<Book> rootItem;
 	private String theme;
 
 
@@ -40,7 +46,7 @@ public class MainController {
 	@FXML
 	private ContextMenu contextMenu1;
 	@FXML
-	private TreeView<String> treeView1;
+	private TreeView<Book> treeView1;
 	@FXML
 	private AnchorPane textContentPane;
 	@FXML
@@ -53,8 +59,26 @@ public class MainController {
 		FileChooser fc = new FileChooser();
 		File file = fc.showOpenDialog(null);
 		if (file != null) {
-			addBooks(file.getName(), file);
-			System.out.println(file.getPath());
+			Utils.addBooks(file.getName(), file, rootItem);
+		}
+	}
+	
+	@FXML
+	void loadFromFile() {
+		try {
+			XmlHandler.Read(rootItem);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@FXML
+	void saveToFile() {
+		try {
+			XmlHandler.Save(rootItem);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -67,11 +91,12 @@ public class MainController {
 		theme = "Dark";
 		//setDarkMode();
 
-		rootItem = new FilterableTreeItem<String>("Books");
+		rootItem = new FilterableTreeItem<Book>(new Book("Books"));
 		rootItem.predicateProperty().bind(Bindings.createObjectBinding(() -> {
 			if (textField1.getText() == null || textField1.getText().isEmpty())
 				return null;
-			return TreeItemPredicate.create(s -> s.contains(textField1.getText()));
+			//return TreeItemPredicate.create(s -> s.contains(textField1.getText()));
+			return TreeItemPredicate.create(x -> ((Book) x).getTitle().contains(textField1.getText()));
 		}, textField1.textProperty()));
 		treeView1.setOnDragOver(new EventHandler<DragEvent>() {
 
@@ -94,7 +119,7 @@ public class MainController {
 				boolean success = false;
 				if (db.hasFiles()) {
 					for (File fl : db.getFiles()) {
-						addBooks(fl.getName(), fl);
+						Utils.addBooks(fl.getName(), fl, rootItem);
 					}
 					// we set the variable to true when we release the mouse click
 					success = true;
@@ -114,34 +139,18 @@ public class MainController {
 		// does not cause exceptions
 		treeView1.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			OpenText(newValue.getValue());
-			System.out.println("Selected Text : " + newValue.getValue());
 		});
 	}
 
-	public void addBooks(String Title, File file) {
-		Boolean res = Utils.addBooks(Title, file);
-
-		if (res) {
-			FilterableTreeItem<String> item = new FilterableTreeItem<String>(Title);
-			rootItem.getInternalChildren().add(item);
-		} else {
-			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("Book Already Exist!");
-			alert.setHeaderText("The book: " + Title + " is already present in your library!");
-			alert.showAndWait();
-		}
-
-	}
+	
 
 	@FXML
 	void onCreateCategory(ActionEvent event) {
-		TreeCategory prova = new TreeCategory("Inserisci nome");
-		rootItem.getInternalChildren().add(prova);
+		Utils.addCategory(rootItem);
 	}
 
 	@FXML
 	void ChangeTheme(ActionEvent event) {
-		System.out.print("Test");
 		if (theme.equals("White")) {
 			setDarkMode();
 		} else {
@@ -165,9 +174,10 @@ public class MainController {
 		theme = "White";
 	}
 
-	void OpenText(String title) {
+	void OpenText(Book b) {
 		try {
-			File toShow = Utils.getBookFromTitle(title);
+			//File toShow = Utils.getBookFromTitle(title);
+			File toShow = b.getPath(); 
 			if (toShow == null)
 				return;
 			TextFileViewer tfv = new TextFileViewer(toShow);
