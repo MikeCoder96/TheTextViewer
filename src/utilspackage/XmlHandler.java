@@ -40,7 +40,7 @@ public class XmlHandler {
 		doc = new Document();
 		doc.setRootElement(new Element(LIBRARY));
 		
-		for(TreeItem<Book> a : root.getChildren()) {
+		for(TreeItem<Book> a : root.getInternalChildren()) {
 			if(a instanceof TreeCategory) {
 				traverseCategory(a,doc.getRootElement());
 			}
@@ -86,7 +86,7 @@ public class XmlHandler {
 	 * from xml file 
 	 */
 	public static void Read(FilterableTreeItem<Book> root) throws JDOMException, IOException {
-		root.getChildren().clear();
+		root.getInternalChildren().clear();
 		Document doc = (Document) new SAXBuilder().build(new File(filename));
 		Element e = doc.getRootElement();
 		if(e.getName().contentEquals(LIBRARY)) {

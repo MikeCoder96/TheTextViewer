@@ -31,8 +31,8 @@
                 </Menu>
                   <Menu mnemonicParsing="false" text="Theme">
                      <items>
-                        <MenuItem fx:id="darkBtn" mnemonicParsing="false" onAction="#ChangeTheme" text="Dark Mode" />
-                        <MenuItem fx:id="whiteBtn" mnemonicParsing="false" onAction="#ChangeTheme" text="White Mode" />
+                        <MenuItem fx:id="darkBtn" mnemonicParsing="false" onAction="#setDarkMode" text="Dark Mode" />
+                        <MenuItem fx:id="whiteBtn" mnemonicParsing="false" onAction="#setWhiteMode" text="White Mode" />
                      </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="Help">

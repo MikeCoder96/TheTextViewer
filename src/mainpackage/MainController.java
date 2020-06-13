@@ -1,18 +1,12 @@
 package mainpackage;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import org.jdom2.JDOMException;
 
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
@@ -20,13 +14,11 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import utilspackage.Book;
 import utilspackage.CellFactoryAdvanced;
 import utilspackage.FilterableTreeItem;
-import utilspackage.TreeCategory;
 import utilspackage.TreeItemPredicate;
 import utilspackage.Utils;
 import utilspackage.XmlHandler;
@@ -158,20 +150,18 @@ public class MainController {
 		}
 	}
 
+    @FXML
 	void setDarkMode() {
 		SceneHandler.getInstance().getMainScene().getStylesheets().remove(Utils.WHITETHEME);
 		if (!SceneHandler.getInstance().getMainScene().getStylesheets().contains(Utils.DARKTHEME))
 			SceneHandler.getInstance().getMainScene().getStylesheets().add(Utils.DARKTHEME);
-
-		theme = "Dark";
 	}
 
+	@FXML
 	void setWhiteMode() {
 		SceneHandler.getInstance().getMainScene().getStylesheets().remove(Utils.DARKTHEME);
 		if (!SceneHandler.getInstance().getMainScene().getStylesheets().contains(Utils.WHITETHEME))
 			SceneHandler.getInstance().getMainScene().getStylesheets().add(Utils.WHITETHEME);
-
-		theme = "White";
 	}
 
 	void OpenText(Book b) {
