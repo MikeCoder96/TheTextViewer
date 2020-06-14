@@ -1,6 +1,8 @@
 package mainpackage;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.util.Base64;
 
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -15,6 +17,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import utilspackage.Book;
 import utilspackage.CellFactoryAdvanced;
@@ -29,6 +33,8 @@ public class MainController {
 	private String theme;
 
 
+    @FXML
+    private WebView webView;	
     @FXML
     private MenuItem darkBtn;
     @FXML
@@ -49,6 +55,9 @@ public class MainController {
 	@FXML
 	void onOpenFile(ActionEvent event) {
 		FileChooser fc = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = 
+                new FileChooser.ExtensionFilter("Book Format", "*.txt", "*.pdf", "*.epub");
+        fc.getExtensionFilters().add(extFilter);
 		File file = fc.showOpenDialog(null);
 		if (file != null) {
 			Utils.addBooks(file.getName(), file, rootItem);
@@ -111,6 +120,7 @@ public class MainController {
 				boolean success = false;
 				if (db.hasFiles()) {
 					for (File fl : db.getFiles()) {
+						if (getExtension(fl.getAbsolutePath()).equals("pdf") || getExtension(fl.getAbsolutePath()).equals("txt") || getExtension(fl.getAbsolutePath()).equals("epub"))
 						Utils.addBooks(fl.getName(), fl, rootItem);
 					}
 					// we set the variable to true when we release the mouse click
@@ -164,20 +174,49 @@ public class MainController {
 			SceneHandler.getInstance().getMainScene().getStylesheets().add(Utils.WHITETHEME);
 	}
 
+	String getExtension(String filename) {
+		String extension = "";
+
+		int i = filename.lastIndexOf('.');
+		if (i > 0) {
+		    extension = filename.substring(i+1);
+		    return extension.toLowerCase();
+		}
+		return null;
+	}
+	
 	void OpenText(Book b) {
 		try {
 			//File toShow = Utils.getBookFromTitle(title);
-			File toShow = b.getPath(); 
-			if (toShow == null)
-				return;
-			TextFileViewer tfv = new TextFileViewer(toShow);
-			textContentPane.getChildren().clear();
-			// set to fill AnchorPane
-			AnchorPane.setBottomAnchor(tfv, 0.0);
-			AnchorPane.setLeftAnchor(tfv, 0.0);
-			AnchorPane.setTopAnchor(tfv, 0.0);
-			AnchorPane.setRightAnchor(tfv, 0.0);
-			textContentPane.getChildren().add(tfv);
+			File toShow = b.getPath();
+			String extension = getExtension(b.getPath().getAbsolutePath());
+			if (extension.equals("pdf")) {
+               WebEngine engine = webView.getEngine();
+               String url = getClass().getResource("/pdfreader/web/viewer.html").toExternalForm();
+               engine.setUserStyleSheetLocation(getClass().getResource("/pdfreader/web/viewer.css").toExternalForm());
+               engine.setJavaScriptEnabled(true);
+               engine.load(url);
+               try {
+                   byte[] data = Files.readAllBytes(toShow.toPath());
+                  String base64 = Base64.getEncoder().encodeToString(data);
+                  engine.executeScript("openFileFromBase64('" + base64 + "')");
+                  return;
+             } catch (Exception e) {
+                  e.printStackTrace();
+             }
+			}
+			else if (extension.equals("txt")){
+				if (toShow == null)
+					return;
+				TextFileViewer tfv = new TextFileViewer(toShow);
+				textContentPane.getChildren().clear();
+				// set to fill AnchorPane
+				AnchorPane.setBottomAnchor(tfv, 0.0);
+				AnchorPane.setLeftAnchor(tfv, 0.0);
+				AnchorPane.setTopAnchor(tfv, 0.0);
+				AnchorPane.setRightAnchor(tfv, 0.0);
+				textContentPane.getChildren().add(tfv);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
