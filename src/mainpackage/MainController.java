@@ -2,6 +2,7 @@ package mainpackage;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 
 import javafx.beans.binding.Bindings;
@@ -31,8 +32,7 @@ public class MainController {
 
 	private FilterableTreeItem<Book> rootItem;
 	private String theme;
-
-
+	
     @FXML
     private WebView webView;	
     @FXML
@@ -89,8 +89,9 @@ public class MainController {
 		 * using FilterableTreeItem to support incremental search from now on use
 		 * getInternalChildren to get the filtered items
 		 */
+		
+		webView.setVisible(false);
 		theme = "Dark";
-		//setDarkMode();
 
 		rootItem = new FilterableTreeItem<Book>(new Book("Books"));
 		rootItem.predicateProperty().bind(Bindings.createObjectBinding(() -> {
@@ -189,25 +190,25 @@ public class MainController {
 		try {
 			//File toShow = Utils.getBookFromTitle(title);
 			File toShow = b.getPath();
+			if (toShow == null)
+				return;
 			String extension = getExtension(b.getPath().getAbsolutePath());
 			if (extension.equals("pdf")) {
-               WebEngine engine = webView.getEngine();
-               String url = getClass().getResource("/pdfreader/web/viewer.html").toExternalForm();
-               engine.setUserStyleSheetLocation(getClass().getResource("/pdfreader/web/viewer.css").toExternalForm());
-               engine.setJavaScriptEnabled(true);
-               engine.load(url);
-               try {
-                   byte[] data = Files.readAllBytes(toShow.toPath());
-                  String base64 = Base64.getEncoder().encodeToString(data);
-                  engine.executeScript("openFileFromBase64('" + base64 + "')");
-                  return;
-             } catch (Exception e) {
-                  e.printStackTrace();
-             }
+				//Files.copy(b.getPath().toPath(), new File(getClass().getResource("/pdfreader/web/viewer.html").toExternalForm().replace("file:/", "").replace("viewer.html", "temp.pdf")).toPath(), StandardCopyOption.REPLACE_EXISTING);
+				webView.setVisible(true);
+		        WebEngine engine = webView.getEngine();
+		        String url = getClass().getResource("/pdfreader/web/viewer.html").toExternalForm();
+		        engine.setUserStyleSheetLocation(getClass().getResource("/pdfreader/web/viewer.css").toExternalForm());
+		        engine.setJavaScriptEnabled(true);
+		        //è stato un parto farlo funzionare ma è andato
+		        //al posto di usare il path si convertono i byte del file in base64
+		        //e lo si da in pasto alla pagina web che gestisce tutto
+		        byte[] data = Files.readAllBytes(b.getPath().toPath());
+		        String base64 = Base64.getEncoder().encodeToString(data);   
+		        engine.load(url + "?file=data:application/pdf;base64," + base64);
 			}
 			else if (extension.equals("txt")){
-				if (toShow == null)
-					return;
+				webView.setVisible(false);
 				TextFileViewer tfv = new TextFileViewer(toShow);
 				textContentPane.getChildren().clear();
 				// set to fill AnchorPane

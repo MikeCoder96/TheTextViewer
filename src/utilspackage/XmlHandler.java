@@ -12,8 +12,6 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import com.oracle.webservices.internal.api.databinding.Databinding.Builder;
-
 import javafx.scene.control.TreeItem;
 
 /*
