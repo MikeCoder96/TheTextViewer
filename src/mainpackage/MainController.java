@@ -1,19 +1,22 @@
 package mainpackage;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -32,6 +35,8 @@ public class MainController {
 
 	private FilterableTreeItem<Book> rootItem;
 	private String theme;
+	
+    volatile String base64;
 	
     @FXML
     private WebView webView;	
@@ -194,19 +199,46 @@ public class MainController {
 				return;
 			String extension = getExtension(b.getPath().getAbsolutePath());
 			if (extension.equals("pdf")) {
-				//Files.copy(b.getPath().toPath(), new File(getClass().getResource("/pdfreader/web/viewer.html").toExternalForm().replace("file:/", "").replace("viewer.html", "temp.pdf")).toPath(), StandardCopyOption.REPLACE_EXISTING);
 				webView.setVisible(true);
 		        WebEngine engine = webView.getEngine();
 		        String url = getClass().getResource("/pdfreader/web/viewer.html").toExternalForm();
-		        engine.setUserStyleSheetLocation(getClass().getResource("/pdfreader/web/viewer.css").toExternalForm());
 		        engine.setJavaScriptEnabled(true);
 		        //è stato un parto farlo funzionare ma è andato
 		        //al posto di usare il path si convertono i byte del file in base64
 		        //e lo si da in pasto alla pagina web che gestisce tutto
-		        byte[] data = Files.readAllBytes(b.getPath().toPath());
-		        String base64 = Base64.getEncoder().encodeToString(data);   
-		        engine.load(url + "?file=data:application/pdf;base64," + base64);
+
+		        Runnable task = () -> {    	
+		        	byte[] data = null;
+					try {					
+						data = Files.readAllBytes(b.getPath().toPath());
+			        	base64 = Base64.getEncoder().encodeToString(data);  
+			        	engine.load(url + "?file=data:application/pdf;base64," + base64);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        };  
+		        task.run();	        
 			}
+			else if (extension.equals("epub"))
+			{
+				//Files.copy(b.getPath().toPath(), new File(getClass().getResource("/pdfreader/web/viewer.html").toExternalForm().replace("file:/", "").replace("viewer.html", "temp.pdf")).toPath(), StandardCopyOption.REPLACE_EXISTING);
+				/*webView.setVisible(true);
+		        WebEngine engine = webView.getEngine();
+		        String url = getClass().getResource("/epubreader/reader/index.html").toExternalForm();
+		        engine.setJavaScriptEnabled(true);
+		        engine.load(url);
+		        engine.executeScript("window.location = \"file:///C:/Users/mikel/OneDrive/Desktop/Study/asd.epub\";");*/
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Not Implemented!");
+				alert.setHeaderText("Sorry about that but the epub reader is not implemented yet! We're working on it!");
+				//alert.setContentText("I have a great message for you!");
+				alert.showAndWait().ifPresent(rs -> {
+				    if (rs == ButtonType.OK) {
+				        //System.out.println("Pressed OK.");
+				    }
+				});
+		    }
 			else if (extension.equals("txt")){
 				webView.setVisible(false);
 				TextFileViewer tfv = new TextFileViewer(toShow);
