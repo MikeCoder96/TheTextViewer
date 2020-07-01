@@ -1,5 +1,8 @@
 package utilspackage;
 
+import java.awt.Desktop;
+import java.io.IOException;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -24,6 +27,22 @@ public class ContextMenuTextCell extends ContextMenu{
 				object.startEdit();
 			}
 		});
+		
+		MenuItem openexternal = new MenuItem("Open External");
+		openexternal.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+			    Desktop dt = Desktop.getDesktop();
+			    try {
+					dt.open(object.getItem().getPath());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
 		MenuItem delete = new MenuItem("Delete");
 		delete.setOnAction(new EventHandler<ActionEvent>() {
 			
@@ -48,5 +67,7 @@ public class ContextMenuTextCell extends ContextMenu{
 		});
 		this.getItems().add(editName);
 		this.getItems().add(delete);
+		if (object.getItem().getPath() != null)
+			this.getItems().add(openexternal);
 	}
 }
