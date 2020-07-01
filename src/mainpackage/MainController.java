@@ -1,12 +1,14 @@
 package mainpackage;
 
 import java.io.File;
+import java.io.FileFilter;
 
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
@@ -28,11 +30,8 @@ public class MainController {
 	private FilterableTreeItem<Book> rootItem;
 	private String theme;
 
-
-    @FXML
-    private MenuItem darkBtn;
-    @FXML
-    private MenuItem whiteBtn;
+	@FXML
+	private Menu themeMenu;
 	@FXML
 	private TextField textField1;
 	@FXML
@@ -58,7 +57,7 @@ public class MainController {
 	@FXML
 	void loadFromFile() {
 		try {
-			XmlHandler.Read(rootItem);
+			XmlHandler.callRead(rootItem);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -68,7 +67,7 @@ public class MainController {
 	@FXML
 	void saveToFile() {
 		try {
-			XmlHandler.Save(rootItem);
+			XmlHandler.callSave(rootItem);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -80,6 +79,7 @@ public class MainController {
 		 * using FilterableTreeItem to support incremental search from now on use
 		 * getInternalChildren to get the filtered items
 		 */
+		loadStartup();
 		theme = "Dark";
 		//setDarkMode();
 
@@ -134,34 +134,18 @@ public class MainController {
 		});
 	}
 
+	private MenuItem createCustomItem(String text) {
+		MenuItem res = new MenuItem(text);
+		res.setOnAction(this::themeItemHandler);
+		return res;
+	}
+	private void themeItemHandler(ActionEvent event) {
+		Utils.changeTheme(Utils.PACKAGEDIR + ((MenuItem)event.getSource()).getText());
+	}
 	
-
 	@FXML
 	void onCreateCategory(ActionEvent event) {
 		Utils.addCategory(rootItem);
-	}
-
-	@FXML
-	void ChangeTheme(ActionEvent event) {
-		if (theme.equals("White")) {
-			setDarkMode();
-		} else {
-			setWhiteMode();
-		}
-	}
-
-    @FXML
-	void setDarkMode() {
-		SceneHandler.getInstance().getMainScene().getStylesheets().remove(Utils.WHITETHEME);
-		if (!SceneHandler.getInstance().getMainScene().getStylesheets().contains(Utils.DARKTHEME))
-			SceneHandler.getInstance().getMainScene().getStylesheets().add(Utils.DARKTHEME);
-	}
-
-	@FXML
-	void setWhiteMode() {
-		SceneHandler.getInstance().getMainScene().getStylesheets().remove(Utils.DARKTHEME);
-		if (!SceneHandler.getInstance().getMainScene().getStylesheets().contains(Utils.WHITETHEME))
-			SceneHandler.getInstance().getMainScene().getStylesheets().add(Utils.WHITETHEME);
 	}
 
 	void OpenText(Book b) {
@@ -181,6 +165,23 @@ public class MainController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	private void loadStartup() {
+		FileFilter ff = new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				if(pathname.getName().startsWith("style_") && pathname.getName().endsWith(".css")) {
+					return true;
+				}
+				return false;
+			}
+		};
+		File dir = new File(getClass().getResource("/formpackage").getPath());
+		if(dir.exists() && dir.isDirectory()) {
+			for(File f : dir.listFiles(ff)) {
+				themeMenu.getItems().add(createCustomItem(f.getName()));
+			}
 		}
 	}
 }
