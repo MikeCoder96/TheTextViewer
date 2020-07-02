@@ -239,7 +239,10 @@ public class MainController {
 						if (extension.equals("pdf")) {
 							webView.setVisible(true);
 					        WebEngine engine = webView.getEngine();
-					        String url = getClass().getResource("/pdfreader/web/viewer.html").toExternalForm();
+					        //String url = getClass().getResource("/home/redin0s/Desktop/pdfreader/web/viewer.html").toExternalForm();
+					        String tmp = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+					        tmp = tmp.substring(0, tmp.lastIndexOf('/'));
+					        String url ="file://"+tmp+"/pdfreader/web/viewer.html";
 					        engine.setJavaScriptEnabled(true);
 					        //ï¿½ stato un parto farlo funzionare ma ï¿½ andato
 					        //al posto di usare il path si convertono i byte del file in base64
