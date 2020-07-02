@@ -26,6 +26,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
     private static final String DROP_HINT_STYLE = "-fx-border-color: #eea82f; -fx-border-width: 0 0 2 0; -fx-padding: 3 3 1 3";
     private TreeCell<Book> dropZone;
     private FilterableTreeItem<Book> draggedItem;
+    private Boolean top = false;
     
     @Override
     public TreeCell<Book> call(TreeView<Book> treeView) {
@@ -146,9 +147,15 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
         
         //handle drag into position
         //TODO find a better zone for drag Into
-        if (y > (height * .75d)) {
+        //System.out.println(y);
+        if (y < (height * .33d)) {
         	dType = DropType.REORDER;
+        	top = true;
         }
+        else if (y > (height * .66d)){
+    		dType = DropType.REORDER;
+    		top = false;
+    	}
         else {
         	dType = DropType.INTO;
         }
@@ -173,15 +180,17 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
         }
         else {
 	        // dropping on parent node makes it the first child
-	        if (Objects.equals(droppedItemParent, thisItem)) {
+	        /*if (Objects.equals(droppedItemParent, thisItem)) {
 	            thisItem.getInternalChildren().add(0, draggedItem);
 	            treeView.getSelectionModel().select(draggedItem);
 	        }
-	        else {
+	        else {*/
 	            // add to new location
 	            int indexInParent = ((FilterableTreeItem<Book>) thisItem.getParent()).getInternalChildren().indexOf(thisItem);
+	            if (top)
+	            	indexInParent--;
 	            ((FilterableTreeItem<Book>) thisItem.getParent()).getInternalChildren().add(indexInParent + 1, draggedItem);
-	        }
+	        //}
         }
         treeView.getSelectionModel().select(draggedItem);
         event.setDropCompleted(success);
