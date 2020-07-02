@@ -2,6 +2,7 @@ package mainpackage;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -15,12 +16,7 @@ public class TextFileViewer extends TextArea{
 	public TextFileViewer(File in) throws IOException {
 		super();
 		setEditable(false);
-		BufferedReader br = new BufferedReader(new FileReader(in));
-		while(br.ready()) {
-			appendText(br.readLine());
-			appendText(System.lineSeparator());
-		}
-		br.close();
+		readFromFile(in);
 		fontsize = 1;
 		setStyle("-fx-font-size:" + fontsize +"em");
 		
@@ -44,5 +40,15 @@ public class TextFileViewer extends TextArea{
 				}
 			}
 		});
+	}
+	
+	public void readFromFile(File in) throws IOException {
+		clear();
+		BufferedReader br = new BufferedReader(new FileReader(in));
+		while(br.ready()) {
+			appendText(br.readLine());
+			appendText(System.lineSeparator());
+		}
+		br.close();
 	}
 }

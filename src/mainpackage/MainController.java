@@ -55,6 +55,8 @@ public class MainController {
 	private SplitPane splitPane1;
 	@FXML
 	private MenuItem menuItem1;
+	
+	private TextFileViewer tfv;
 
 	@FXML
 	void onOpenFile(ActionEvent event) {
@@ -180,6 +182,11 @@ public class MainController {
 			if (toShow == null)
 				return;
 			String extension = getExtension(b.getPath().getAbsolutePath());
+			
+			webView.setVisible(false);
+			if(tfv != null)
+				tfv.setVisible(false);
+			
 			if (extension.equals("pdf")) {
 				webView.setVisible(true);
 		        WebEngine engine = webView.getEngine();
@@ -222,15 +229,19 @@ public class MainController {
 //				});
 		    }
 			else if (extension.equals("txt")){
-				webView.setVisible(false);
-				TextFileViewer tfv = new TextFileViewer(toShow);
-				textContentPane.getChildren().clear();
-				// set to fill AnchorPane
-				AnchorPane.setBottomAnchor(tfv, 0.0);
-				AnchorPane.setLeftAnchor(tfv, 0.0);
-				AnchorPane.setTopAnchor(tfv, 0.0);
-				AnchorPane.setRightAnchor(tfv, 0.0);
-				textContentPane.getChildren().add(tfv);
+				if(tfv == null) {
+					tfv = new TextFileViewer(toShow);
+					// set to fill AnchorPane
+					AnchorPane.setBottomAnchor(tfv, 0.0);
+					AnchorPane.setLeftAnchor(tfv, 0.0);
+					AnchorPane.setTopAnchor(tfv, 0.0);
+					AnchorPane.setRightAnchor(tfv, 0.0);
+					textContentPane.getChildren().add(tfv);
+				}
+				else {
+					tfv.readFromFile(toShow);
+				}
+				tfv.setVisible(true);
 			}
 
 		} catch (Exception e) {
