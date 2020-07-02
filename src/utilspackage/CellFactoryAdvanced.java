@@ -5,10 +5,10 @@ import java.util.Objects;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
@@ -91,6 +91,12 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
                 }
                 setContextMenu(new ContextMenuTextCell(this));
                 setText(item.getTitle());
+                if(item.getPath() == null) {
+                	ImageView imv = new ImageView("/formpackage/icon.png");
+                	setGraphic(imv);
+                }
+                else
+                	setGraphic(getTreeItem().getGraphic());
             }
         };
         cell.setOnDragDetected((MouseEvent event) -> dragDetected(event, cell, treeView));

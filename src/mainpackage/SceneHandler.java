@@ -49,7 +49,7 @@ public class SceneHandler {
 			public void handle(WindowEvent event) {
 					try {
 						XmlHandler.saveSettings();
-						XmlHandler.callSave(Utils.rootItem);
+						XmlHandler.callLocalSave(Utils.rootItem);
 					} catch (JDOMException | IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

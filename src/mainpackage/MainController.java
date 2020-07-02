@@ -5,10 +5,12 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.List;
 
 import org.jdom2.JDOMException;
 
 import javafx.beans.binding.Bindings;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -58,22 +60,32 @@ public class MainController {
 	
 	private TextFileViewer tfv;
 
+	private Task<Void> textTask;
+	
+	private FileChooser bookfc;
+	private FileChooser libfc;
+	
 	@FXML
 	void onOpenFile(ActionEvent event) {
-		FileChooser fc = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = 
-                new FileChooser.ExtensionFilter("Book Format", "*.txt", "*.pdf", "*.epub");
-        fc.getExtensionFilters().add(extFilter);
-		File file = fc.showOpenDialog(null);
-		if (file != null && file.exists()) {
-			Utils.addBooks(new Book(file.getName(),file), Utils.rootItem);
+		if(bookfc == null) {
+			bookfc = new FileChooser();
+	        bookfc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Book Format", "*.txt", "*.pdf", "*.epub"));
+		}
+		List<File> files = bookfc.showOpenMultipleDialog(null);
+		for(File file: files) {
+			if (file != null && file.exists()) {
+				Utils.addBooks(new Book(file.getName(),file), Utils.rootItem);
+			}
 		}
 	}
 	
 	@FXML
 	void loadFromFile() {
+		File tmp = libfcgetFile(0);
+		if(tmp == null)
+			return;
 		try {
-			XmlHandler.callRead(Utils.rootItem);
+			XmlHandler.callRead(Utils.rootItem,tmp);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,11 +94,28 @@ public class MainController {
 	
 	@FXML
 	void saveToFile() {
+		File tmp = libfcgetFile(1);
+		if(tmp == null)
+			return;
+		else if (!tmp.getPath().endsWith(".xml")){
+			tmp = new File(tmp.getPath() + ".xml");
+		}
 		try {
-			XmlHandler.callSave(Utils.rootItem);
+			XmlHandler.callSave(Utils.rootItem,tmp);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private File libfcgetFile(int req) {
+		if(libfc == null) {
+			libfc = new FileChooser();
+	        libfc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library Format", "*.xml"));
+		}
+		if(req == 0)
+			return libfc.showOpenDialog(null);
+		else
+			return libfc.showSaveDialog(null);
 	}
 
 	@FXML
@@ -176,77 +205,89 @@ public class MainController {
 	}
 	
 	void OpenText(Book b) {
-		try {
-			//File toShow = Utils.getBookFromTitle(title);
-			File toShow = b.getPath();
-			if (toShow == null)
-				return;
-			String extension = getExtension(b.getPath().getAbsolutePath());
-			
-			webView.setVisible(false);
-			if(tfv != null)
-				tfv.setVisible(false);
-			
-			if (extension.equals("pdf")) {
-				webView.setVisible(true);
-		        WebEngine engine = webView.getEngine();
-		        String url = getClass().getResource("/pdfreader/web/viewer.html").toExternalForm();
-		        engine.setJavaScriptEnabled(true);
-		        //� stato un parto farlo funzionare ma � andato
-		        //al posto di usare il path si convertono i byte del file in base64
-		        //e lo si da in pasto alla pagina web che gestisce tutto
+		if (textTask != null && textTask.isRunning()) {
+			textTask.cancel();
+		}
+		else {
+			textTask = new Task<Void>() {
+				@Override
+				protected Void call() throws Exception {
+					try {
+						//File toShow = Utils.getBookFromTitle(title);
+						File toShow = b.getPath();
+						if (toShow == null)
+							return null;
+						String extension = getExtension(b.getPath().getAbsolutePath());
+						
+						webView.setVisible(false);
+						if(tfv != null)
+							tfv.setVisible(false);
+						
+						if (extension.equals("pdf")) {
+							webView.setVisible(true);
+					        WebEngine engine = webView.getEngine();
+					        String url = getClass().getResource("/pdfreader/web/viewer.html").toExternalForm();
+					        engine.setJavaScriptEnabled(true);
+					        //� stato un parto farlo funzionare ma � andato
+					        //al posto di usare il path si convertono i byte del file in base64
+					        //e lo si da in pasto alla pagina web che gestisce tutto
 
-		        Runnable task = () -> {    	
-		        	byte[] data = null;
-					try {					
-						data = Files.readAllBytes(b.getPath().toPath());
-			        	base64 = Base64.getEncoder().encodeToString(data);  
-			        	engine.load(url + "?file=data:application/pdf;base64," + base64);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
+					        Runnable task = () -> {    	
+					        	byte[] data = null;
+								try {					
+									data = Files.readAllBytes(b.getPath().toPath());
+						        	base64 = Base64.getEncoder().encodeToString(data);  
+						        	engine.load(url + "?file=data:application/pdf;base64," + base64);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+					        };  
+					        task.run();	        
+						}
+						/*else if (extension.equals("epub"))
+						{
+							//Files.copy(b.getPath().toPath(), new File(getClass().getResource("/pdfreader/web/viewer.html").toExternalForm().replace("file:/", "").replace("viewer.html", "temp.pdf")).toPath(), StandardCopyOption.REPLACE_EXISTING);
+							webView.setVisible(true);
+					        WebEngine engine = webView.getEngine();
+					        String url = getClass().getResource("/epubreader/reader/index.html").toExternalForm();
+					        engine.setJavaScriptEnabled(true);
+					        engine.load(url);
+					        //engine.executeScript("window.location = \"file:///C:/Users/mikel/OneDrive/Desktop/Study/asd.epub\";");
+							Alert alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Not Implemented!");
+							alert.setHeaderText("Sorry about that but the epub reader is not implemented yet! We're working on it!");
+							//alert.setContentText("I have a great message for you!");
+							alert.showAndWait().ifPresent(rs -> {
+							    if (rs == ButtonType.OK) {
+							        //System.out.println("Pressed OK.");
+							    }
+							});
+					    }*/
+						else if (extension.equals("txt")){
+							if(tfv == null) {
+								tfv = new TextFileViewer(toShow);
+								// set to fill AnchorPane
+								AnchorPane.setBottomAnchor(tfv, 0.0);
+								AnchorPane.setLeftAnchor(tfv, 0.0);
+								AnchorPane.setTopAnchor(tfv, 0.0);
+								AnchorPane.setRightAnchor(tfv, 0.0);
+								textContentPane.getChildren().add(tfv);
+							}
+							else {
+								tfv.readFromFile(toShow);
+							}
+							tfv.setVisible(true);
+						}
+
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
-		        };  
-		        task.run();	        
-			}
-			else if (extension.equals("epub"))
-			{
-				//Files.copy(b.getPath().toPath(), new File(getClass().getResource("/pdfreader/web/viewer.html").toExternalForm().replace("file:/", "").replace("viewer.html", "temp.pdf")).toPath(), StandardCopyOption.REPLACE_EXISTING);
-				webView.setVisible(true);
-		        WebEngine engine = webView.getEngine();
-		        String url = getClass().getResource("/epubreader/reader/index.html").toExternalForm();
-		        engine.setJavaScriptEnabled(true);
-		        engine.load(url);
-		        //engine.executeScript("window.location = \"file:///C:/Users/mikel/OneDrive/Desktop/Study/asd.epub\";");
-//				Alert alert = new Alert(AlertType.INFORMATION);
-//				alert.setTitle("Not Implemented!");
-//				alert.setHeaderText("Sorry about that but the epub reader is not implemented yet! We're working on it!");
-//				//alert.setContentText("I have a great message for you!");
-//				alert.showAndWait().ifPresent(rs -> {
-//				    if (rs == ButtonType.OK) {
-//				        //System.out.println("Pressed OK.");
-//				    }
-//				});
-		    }
-			else if (extension.equals("txt")){
-				if(tfv == null) {
-					tfv = new TextFileViewer(toShow);
-					// set to fill AnchorPane
-					AnchorPane.setBottomAnchor(tfv, 0.0);
-					AnchorPane.setLeftAnchor(tfv, 0.0);
-					AnchorPane.setTopAnchor(tfv, 0.0);
-					AnchorPane.setRightAnchor(tfv, 0.0);
-					textContentPane.getChildren().add(tfv);
+					return null;
 				}
-				else {
-					tfv.readFromFile(toShow);
-				}
-				tfv.setVisible(true);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
+			};
 		}
+		textTask.run();
 	}
 	public void loadStartup() {
 		FileFilter ff = new FileFilter() {
@@ -265,7 +306,7 @@ public class MainController {
 			}
 		}
 		try {
-			XmlHandler.callRead(Utils.rootItem);
+			XmlHandler.callLocalRead(Utils.rootItem);
 		} catch (JDOMException | IOException e) {
 			// TODO Auto-generated catch block
 			Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -275,7 +316,7 @@ public class MainController {
 			alert.showAndWait().ifPresent(rs -> {
 			    if (rs == ButtonType.OK) {
 			        try {
-						XmlHandler.callSave(Utils.rootItem);
+						XmlHandler.callLocalSave(Utils.rootItem);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();

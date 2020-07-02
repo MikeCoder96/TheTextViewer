@@ -39,11 +39,20 @@ public class XmlHandler {
 	private static XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 	public static List<Pair<Book, FilterableTreeItem<Book>>> nonfoundbooks;
 
-	public static void callSave(FilterableTreeItem<Book> root) throws FileNotFoundException, IOException {
+	
+	public static void callLocalRead(FilterableTreeItem<Book> root) throws JDOMException, IOException {
+		callRead(root, new File(LOCALSAVE));
+	}
+	public static void callLocalSave(FilterableTreeItem<Book> root) throws IOException {
+		callSave(root, new File(LOCALSAVE));
+	}
+	
+	
+	public static void callSave(FilterableTreeItem<Book> root, File f) throws FileNotFoundException, IOException {
 		doc = new Document();
 		doc.setRootElement(new Element(LIBRARY));
 		Save(root, doc.getRootElement());
-		out.output(doc, new FileOutputStream(LOCALSAVE));
+		out.output(doc, new FileOutputStream(f));
 	}
 
 	/*
@@ -73,9 +82,9 @@ public class XmlHandler {
 	}
 
 	// initialize book loading from file
-	public static void callRead(FilterableTreeItem<Book> root) throws JDOMException, IOException {
+	public static void callRead(FilterableTreeItem<Book> root, File f) throws JDOMException, IOException {
 		root.getInternalChildren().clear();
-		doc = (Document) new SAXBuilder().build(new File(LOCALSAVE));
+		doc = (Document) new SAXBuilder().build(f);
 		Element e = doc.getRootElement();
 		if (e.getName().contentEquals(LIBRARY)) {
 			Read(root, e);
