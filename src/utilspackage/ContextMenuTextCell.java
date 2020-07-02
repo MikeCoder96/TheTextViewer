@@ -4,7 +4,6 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;

@@ -93,6 +93,19 @@ public class MainController {
 	}
 	
 	@FXML
+	void showAbout() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("About Us!");
+		alert.setHeaderText("Caesar is your friend....");
+		alert.setContentText("Nothing to see here! 👀 \nUnv gebingb ha'rnfgre rtt, pbzcyvzragv! Dhrfgb cebtenzzn gv è fgngb cerfragngb qn Enssnryr Obin r Zvpuryr Orapneqvab");
+		alert.showAndWait().ifPresent(rs -> {
+		    if (rs == ButtonType.OK) {
+		        //System.out.println("Pressed OK.");
+		    }
+		});
+	}
+	
+	@FXML
 	void saveToFile() {
 		File tmp = libfcgetFile(1);
 		if(tmp == null)
@@ -228,7 +241,7 @@ public class MainController {
 					        WebEngine engine = webView.getEngine();
 					        String url = getClass().getResource("/pdfreader/web/viewer.html").toExternalForm();
 					        engine.setJavaScriptEnabled(true);
-					        //� stato un parto farlo funzionare ma � andato
+					        //ï¿½ stato un parto farlo funzionare ma ï¿½ andato
 					        //al posto di usare il path si convertono i byte del file in base64
 					        //e lo si da in pasto alla pagina web che gestisce tutto
 

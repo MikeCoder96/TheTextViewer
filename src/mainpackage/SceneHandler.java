@@ -76,8 +76,8 @@ public class SceneHandler {
 		//set stage size bounds
 		stage.setMinHeight(MainFormSettings.MINHEIGHT);
 		stage.setMinWidth(MainFormSettings.MINWIDTH);
-		stage.setMaxHeight(MainFormSettings.MAXHEIGHT);
-		stage.setMaxWidth(MainFormSettings.MAXWIDTH);
+		//stage.setMaxHeight(MainFormSettings.MAXHEIGHT);
+		//stage.setMaxWidth(MainFormSettings.MAXWIDTH);
 	}
 
 	
