@@ -5,6 +5,7 @@ import java.util.Objects;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -36,18 +37,15 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
             }
             
             private void createTextField() {
-                textField = new TextField(getString());
+                textField = new TextField();
                 textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
-
                 	//edit handler
                     @Override
                     public void handle(KeyEvent t) {
                     	//submit edit with ENTER cancel with ESCAPE
                         if (t.getCode() == KeyCode.ENTER) {
-                        	Book b = new Book(textField.getText(), getItem().getPath());
-                        	//getItem().setTitle(textField.getText());
-                        	//cancelEdit();
-                            commitEdit(b);
+                        	Book tmp = new Book(textField.getText(),getItem().getPath());
+                        	commitEdit(tmp);
                         } else if (t.getCode() == KeyCode.ESCAPE) {
                             cancelEdit();
                         }
@@ -62,6 +60,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
                 if (textField == null) {
                     createTextField();
                 }
+                textField.setText(getString());
                 setText(null);
                 setGraphic(textField);
                 textField.selectAll();
@@ -72,6 +71,12 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
                 super.cancelEdit();
                 setText(getItem().getTitle());
                 setGraphic(getTreeItem().getGraphic());
+            }
+            
+            @Override
+            public void commitEdit(Book newvalue) {
+            	super.commitEdit(newvalue);
+            	setGraphic(getTreeItem().getGraphic());
             }
         	
             //update TreeCell on expand/move/delete/reorder
@@ -157,7 +162,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
         droppedItemParent.getInternalChildren().remove(draggedItem);
         
         //handle drop inside an empty category
-        if (dType == DropType.INTO && thisItem instanceof TreeCategory) {
+        if (dType == DropType.INTO && thisItem.getValue().getPath() == null) {
         	thisItem.getInternalChildren().add(draggedItem);
         }
         else {

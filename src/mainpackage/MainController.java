@@ -63,8 +63,8 @@ public class MainController {
                 new FileChooser.ExtensionFilter("Book Format", "*.txt", "*.pdf", "*.epub");
         fc.getExtensionFilters().add(extFilter);
 		File file = fc.showOpenDialog(null);
-		if (file != null) {
-			Utils.addBooks(file.getName(), file, Utils.rootItem);
+		if (file != null && file.exists()) {
+			Utils.addBooks(new Book(file.getName(),file), Utils.rootItem);
 		}
 	}
 	
@@ -125,7 +125,7 @@ public class MainController {
 				if (db.hasFiles()) {
 					for (File fl : db.getFiles()) {
 						if (getExtension(fl.getAbsolutePath()).equals("pdf") || getExtension(fl.getAbsolutePath()).equals("txt") || getExtension(fl.getAbsolutePath()).equals("epub"))
-						Utils.addBooks(fl.getName(), fl, Utils.rootItem);
+						Utils.addBooks(new Book(fl.getName(), fl), Utils.rootItem);
 					}
 					// we set the variable to true when we release the mouse click
 					success = true;

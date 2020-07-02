@@ -15,42 +15,24 @@ public class Utils {
 	public static FilterableTreeItem<Book> rootItem;
 	
 	
-	public static void addBooks(String Title, File file, FilterableTreeItem<Book> rootItem) {
-		if (!Utils.libri.contains(file)) { 
-			FilterableTreeItem<Book> item = new FilterableTreeItem<Book>(new Book(Title,file));
+	public static void addBooks(Book newvalue, FilterableTreeItem<Book> rootItem) {
+		if (!Utils.libri.contains(newvalue.getPath())) { 
+			FilterableTreeItem<Book> item = new FilterableTreeItem<Book>(newvalue);
 			rootItem.getInternalChildren().add(item);
-			Utils.libri.add(file);
+			Utils.libri.add(newvalue.getPath());
 		} 
 		else {
 			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("Book Already Exist!"); alert.setHeaderText("The book: " + Title + " is already present in your library!"); alert.showAndWait();
+			alert.setTitle("Book Already Exist!"); alert.setHeaderText("The book: " + newvalue.getTitle() + " is already present in your library!"); alert.showAndWait();
 		}
 	}
 	
 	public static void addCategory(FilterableTreeItem<Book> rootItem) {
-		TreeCategory prova = new TreeCategory("Inserisci nome");
-		rootItem.getInternalChildren().add(prova);
+		rootItem.getInternalChildren().add(new FilterableTreeItem<Book>(new Book("Inserisci nome")));
 	}
 	
 	public static void changeTheme(String file) {
 		SceneHandler.getInstance().getMainScene().getStylesheets().clear();
 		SceneHandler.getInstance().getMainScene().getStylesheets().add(file);
 	}
-	/*
-	 * public static HashMap<String, File> books = new HashMap<String, File>();
-	 * 
-	 * public static Boolean addBooks(String title, File path) { if
-	 * (books.containsKey(title)) return false; else { books.put(title, path);
-	 * return true; } }
-	 * 
-	 * public static File getBookFromTitle(String title) { return books.get(title);
-	 * }
-	 */	
-	/*public static ArrayList<String> searchBooksFromWords(String text){
-		ArrayList<String> tmp = new ArrayList<String>();
-		for (String x : books.keySet()) {
-			
-		}
-		return tmp;
-	}*/
 }

@@ -51,7 +51,7 @@ public class XmlHandler {
 	 */
 	public static void Save(FilterableTreeItem<Book> root, Element xmlroot) {
 		for (TreeItem<Book> a : root.getInternalChildren()) {
-			if (a instanceof TreeCategory) {
+			if (a.getValue().getPath() == null) {
 				Element ca = new Element(CATEGORY);
 				ca.setAttribute(CATEGORY_NAME, a.getValue().getTitle());
 				Save((FilterableTreeItem<Book>) a, ca);
@@ -90,27 +90,19 @@ public class XmlHandler {
 	private static void Read(FilterableTreeItem<Book> root, Element xmlroot) throws JDOMException, IOException {
 		for (Element a : xmlroot.getChildren()) {
 			if (a.getName().contentEquals(CATEGORY)) {
-				TreeCategory rt = new TreeCategory(a.getAttributeValue(CATEGORY_NAME));
+				FilterableTreeItem<Book> rt = new FilterableTreeItem<Book>(new Book(a.getAttributeValue(CATEGORY_NAME)));
 				root.getInternalChildren().add(rt);
 				Read(rt, a);
 			} else {
-				Book tmp = createBook(a);
-				if (tmp.getPath().exists())
-					root.getInternalChildren().add(new FilterableTreeItem<Book>(tmp));
+				Book newval = new Book(a.getAttributeValue(BOOK_TITLE), new File(a.getChildText(BOOK_PATH)));
+				if (newval.getPath().exists())
+					Utils.addBooks(newval, root);
 				else
-					notFoundList(tmp, root);
+					notFoundList(newval, root);
 			}
 		}
 	}
-
-	/*
-	 * Convert xml book to book object
-	 */
-	private static Book createBook(Element b) {
-		File f = new File(b.getChildText(BOOK_PATH));
-		return new Book(b.getAttributeValue(BOOK_TITLE), f);
-	}
-
+	
 	// handle not found files list
 	private static void notFoundList(Book a, FilterableTreeItem<Book> root) {
 		if (nonfoundbooks == null)

@@ -14,6 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import utilspackage.Book;
 import utilspackage.FilterableTreeItem;
+import utilspackage.Utils;
 import utilspackage.XmlHandler;
 
 public class BookDialogController {
@@ -46,7 +47,7 @@ public class BookDialogController {
 					if(sf != null && sf.exists()) {
 						Book tmp = toaddbooks.getSelectionModel().getSelectedItem().getKey();
 						tmp.setPath(sf);
-						toaddbooks.getSelectionModel().getSelectedItem().getValue().getInternalChildren().add(new FilterableTreeItem<Book>(tmp));
+						Utils.addBooks(tmp, toaddbooks.getSelectionModel().getSelectedItem().getValue());
 						toaddbooks.getItems().remove(toaddbooks.getSelectionModel().getSelectedIndex());
 					}
 				}
