@@ -20,9 +20,8 @@
                 <Menu mnemonicParsing="false" text="File">
                   <items>
                         <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="Open" />
-                    <MenuItem mnemonicParsing="false" text="Close" />
-                    <MenuItem mnemonicParsing="false" onAction="#saveToFile" text="Save" />
-                    <MenuItem mnemonicParsing="false" onAction="#loadFromFile" text="Load" />
+                    <MenuItem mnemonicParsing="false" onAction="#saveToFile" text="Export" />
+                    <MenuItem mnemonicParsing="false" onAction="#loadFromFile" text="Import" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">

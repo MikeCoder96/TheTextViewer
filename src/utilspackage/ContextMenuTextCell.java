@@ -49,8 +49,8 @@ public class ContextMenuTextCell extends ContextMenu{
 			@Override
 			public void handle(ActionEvent event) {
 				String title = object.getItem().getTitle();
-				TreeItem<Book> toDelete = object.getTreeItem();
-				Boolean isDeleted = toDelete.getParent().getChildren().remove(toDelete);
+				FilterableTreeItem<Book> toDelete = (FilterableTreeItem<Book>) object.getTreeItem();
+				Boolean isDeleted = ((FilterableTreeItem<Book>)toDelete.getParent()).getInternalChildren().remove(toDelete);
 				if (isDeleted)
 				{
 					Alert alert = new Alert(AlertType.INFORMATION);

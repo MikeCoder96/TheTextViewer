@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
 
+import org.jdom2.JDOMException;
+
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,8 +37,6 @@ import utilspackage.XmlHandler;
 
 public class MainController {
 
-	private FilterableTreeItem<Book> rootItem;
-
 	@FXML
 	private Menu themeMenu;
 	
@@ -64,14 +64,14 @@ public class MainController {
         fc.getExtensionFilters().add(extFilter);
 		File file = fc.showOpenDialog(null);
 		if (file != null) {
-			Utils.addBooks(file.getName(), file, rootItem);
+			Utils.addBooks(file.getName(), file, Utils.rootItem);
 		}
 	}
 	
 	@FXML
 	void loadFromFile() {
 		try {
-			XmlHandler.callRead(rootItem);
+			XmlHandler.callRead(Utils.rootItem);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,7 +81,7 @@ public class MainController {
 	@FXML
 	void saveToFile() {
 		try {
-			XmlHandler.callSave(rootItem);
+			XmlHandler.callSave(Utils.rootItem);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -93,12 +93,11 @@ public class MainController {
 		 * using FilterableTreeItem to support incremental search from now on use
 		 * getInternalChildren to get the filtered items
 		 */
-		loadStartup();
 		
 		webView.setVisible(false);
 
-		rootItem = new FilterableTreeItem<Book>(new Book("Books"));
-		rootItem.predicateProperty().bind(Bindings.createObjectBinding(() -> {
+		Utils.rootItem = new FilterableTreeItem<Book>(new Book("Books"));
+		Utils.rootItem.predicateProperty().bind(Bindings.createObjectBinding(() -> {
 			if (textField1.getText() == null || textField1.getText().isEmpty())
 				return null;
 			//return TreeItemPredicate.create(s -> s.contains(textField1.getText()));
@@ -108,7 +107,7 @@ public class MainController {
 
 			@Override
 			public void handle(DragEvent event) {
-				if (treeView1.getRoot() != null && event.getGestureSource() != rootItem
+				if (treeView1.getRoot() != null && event.getGestureSource() != Utils.rootItem
 						&& event.getDragboard().hasFiles()) {
 					event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 				}
@@ -126,7 +125,7 @@ public class MainController {
 				if (db.hasFiles()) {
 					for (File fl : db.getFiles()) {
 						if (getExtension(fl.getAbsolutePath()).equals("pdf") || getExtension(fl.getAbsolutePath()).equals("txt") || getExtension(fl.getAbsolutePath()).equals("epub"))
-						Utils.addBooks(fl.getName(), fl, rootItem);
+						Utils.addBooks(fl.getName(), fl, Utils.rootItem);
 					}
 					// we set the variable to true when we release the mouse click
 					success = true;
@@ -138,7 +137,7 @@ public class MainController {
 			}
 		});
 
-		treeView1.setRoot(rootItem);
+		treeView1.setRoot(Utils.rootItem);
 		treeView1.setShowRoot(false);
 		treeView1.setEditable(true);
 		treeView1.setCellFactory(new CellFactoryAdvanced());
@@ -160,7 +159,7 @@ public class MainController {
 	
 	@FXML
 	void onCreateCategory(ActionEvent event) {
-		Utils.addCategory(rootItem);
+		Utils.addCategory(Utils.rootItem);
 	}
 
 	String getExtension(String filename) {
@@ -206,21 +205,21 @@ public class MainController {
 			else if (extension.equals("epub"))
 			{
 				//Files.copy(b.getPath().toPath(), new File(getClass().getResource("/pdfreader/web/viewer.html").toExternalForm().replace("file:/", "").replace("viewer.html", "temp.pdf")).toPath(), StandardCopyOption.REPLACE_EXISTING);
-				/*webView.setVisible(true);
+				webView.setVisible(true);
 		        WebEngine engine = webView.getEngine();
 		        String url = getClass().getResource("/epubreader/reader/index.html").toExternalForm();
 		        engine.setJavaScriptEnabled(true);
 		        engine.load(url);
-		        engine.executeScript("window.location = \"file:///C:/Users/mikel/OneDrive/Desktop/Study/asd.epub\";");*/
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Not Implemented!");
-				alert.setHeaderText("Sorry about that but the epub reader is not implemented yet! We're working on it!");
-				//alert.setContentText("I have a great message for you!");
-				alert.showAndWait().ifPresent(rs -> {
-				    if (rs == ButtonType.OK) {
-				        //System.out.println("Pressed OK.");
-				    }
-				});
+		        //engine.executeScript("window.location = \"file:///C:/Users/mikel/OneDrive/Desktop/Study/asd.epub\";");
+//				Alert alert = new Alert(AlertType.INFORMATION);
+//				alert.setTitle("Not Implemented!");
+//				alert.setHeaderText("Sorry about that but the epub reader is not implemented yet! We're working on it!");
+//				//alert.setContentText("I have a great message for you!");
+//				alert.showAndWait().ifPresent(rs -> {
+//				    if (rs == ButtonType.OK) {
+//				        //System.out.println("Pressed OK.");
+//				    }
+//				});
 		    }
 			else if (extension.equals("txt")){
 				webView.setVisible(false);
@@ -238,7 +237,7 @@ public class MainController {
 			e.printStackTrace();
 		}
 	}
-	private void loadStartup() {
+	public void loadStartup() {
 		FileFilter ff = new FileFilter() {
 			@Override
 			public boolean accept(File pathname) {
@@ -253,6 +252,25 @@ public class MainController {
 			for(File f : dir.listFiles(ff)) {
 				themeMenu.getItems().add(createCustomItem(f.getName()));
 			}
+		}
+		try {
+			XmlHandler.callRead(Utils.rootItem);
+		} catch (JDOMException | IOException e) {
+			// TODO Auto-generated catch block
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Local library not found!");
+			alert.setHeaderText("Do you want to create a new local library?");
+			//alert.setContentText("I have a great message for you!");
+			alert.showAndWait().ifPresent(rs -> {
+			    if (rs == ButtonType.OK) {
+			        try {
+						XmlHandler.callSave(Utils.rootItem);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+			    }
+			});
 		}
 	}
 }

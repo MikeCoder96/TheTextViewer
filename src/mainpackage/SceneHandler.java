@@ -22,6 +22,7 @@ public class SceneHandler {
 	private Stage stage;
 	private Scene mainscene;
 	private Stage notfounddialog;
+	private FXMLLoader mainloader;
 	
 	public Scene getMainScene() {
 		return mainscene;
@@ -48,6 +49,7 @@ public class SceneHandler {
 			public void handle(WindowEvent event) {
 					try {
 						XmlHandler.saveSettings();
+						XmlHandler.callSave(Utils.rootItem);
 					} catch (JDOMException | IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -56,11 +58,12 @@ public class SceneHandler {
 		});
 		stage.setResizable(true);
 		stage.show();
+		((MainController)mainloader.getController()).loadStartup();
 	}
 	
 	private void setMainScene() throws Exception {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/formpackage/mainform.fxml"));
-		Pane root = (AnchorPane)loader.load();
+		mainloader = new FXMLLoader(getClass().getResource("/formpackage/mainform.fxml"));
+		Pane root = (AnchorPane)mainloader.load();
 		Scene scenes = new Scene(root);
 		mainscene = scenes;
 		try {

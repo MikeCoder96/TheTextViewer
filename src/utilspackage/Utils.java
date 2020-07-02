@@ -12,6 +12,8 @@ public class Utils {
 	final public static String PACKAGEDIR = "/formpackage/";
 	final public static String DEFAULTTHEME = "style_white.css";
 	final public static Set<File> libri = new HashSet<File>();
+	public static FilterableTreeItem<Book> rootItem;
+	
 	
 	public static void addBooks(String Title, File file, FilterableTreeItem<Book> rootItem) {
 		if (!Utils.libri.contains(file)) { 
