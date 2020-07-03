@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
+		//handle single execution only
 		File p = new File(".app.lock");
 		try {
 			FileChannel v = FileChannel.open(p.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);

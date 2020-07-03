@@ -146,8 +146,6 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
         double y = event.getSceneY() - (sceneloc.getY());
         
         //handle drag into position
-        //TODO find a better zone for drag Into
-        //System.out.println(y);
         if (y < (height * .33d)) {
         	dType = DropType.REORDER;
         	top = true;
@@ -179,18 +177,10 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
         	thisItem.getInternalChildren().add(draggedItem);
         }
         else {
-	        // dropping on parent node makes it the first child
-	        /*if (Objects.equals(droppedItemParent, thisItem)) {
-	            thisItem.getInternalChildren().add(0, draggedItem);
-	            treeView.getSelectionModel().select(draggedItem);
-	        }
-	        else {*/
-	            // add to new location
-	            int indexInParent = ((FilterableTreeItem<Book>) thisItem.getParent()).getInternalChildren().indexOf(thisItem);
-	            if (top)
-	            	indexInParent--;
-	            ((FilterableTreeItem<Book>) thisItem.getParent()).getInternalChildren().add(indexInParent + 1, draggedItem);
-	        //}
+            int indexInParent = ((FilterableTreeItem<Book>) thisItem.getParent()).getInternalChildren().indexOf(thisItem);
+            if (top)
+            	indexInParent--;
+            ((FilterableTreeItem<Book>) thisItem.getParent()).getInternalChildren().add(indexInParent + 1, draggedItem);
         }
         treeView.getSelectionModel().select(draggedItem);
         event.setDropCompleted(success);

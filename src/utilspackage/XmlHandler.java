@@ -125,7 +125,7 @@ public class XmlHandler {
 		if (st == null || !st.exists()) {
 			doc = new Document();
 			doc.setRootElement(new Element(SETTINGSROOT));
-			doc.getRootElement().setAttribute(STYLE, Utils.PACKAGEDIR + Utils.DEFAULTTHEME);
+			doc.getRootElement().setAttribute(STYLE, Utils.DEFAULTTHEME);
 			out.output(doc, new FileOutputStream(SETTINGS));
 		}
 		doc = (Document) new SAXBuilder().build(new File(SETTINGS));

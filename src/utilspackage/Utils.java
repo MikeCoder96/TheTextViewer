@@ -9,8 +9,7 @@ import javafx.scene.control.Alert.AlertType;
 import mainpackage.SceneHandler;
 
 public class Utils {
-	final public static String PACKAGEDIR = "/formpackage/";
-	final public static String DEFAULTTHEME = "style_white.css";
+	final public static String DEFAULTTHEME = "styles/style_white.css";
 	final public static Set<File> libri = new HashSet<File>();
 	public static FilterableTreeItem<Book> rootItem;
 	

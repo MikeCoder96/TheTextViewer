@@ -98,11 +98,7 @@ public class MainController {
 		alert.setTitle("About Us!");
 		alert.setHeaderText("Caesar is your friend....");
 		alert.setContentText("Nothing to see here! 👀 \nUnv gebingb ha'rnfgre rtt, pbzcyvzragv! Dhrfgb cebtenzzn gv è fgngb cerfragngb qn Enssnryr Obin r Zvpuryr Orapneqvab");
-		alert.showAndWait().ifPresent(rs -> {
-		    if (rs == ButtonType.OK) {
-		        //System.out.println("Pressed OK.");
-		    }
-		});
+		alert.showAndWait();
 	}
 	
 	@FXML
@@ -168,7 +164,7 @@ public class MainController {
 				boolean success = false;
 				if (db.hasFiles()) {
 					for (File fl : db.getFiles()) {
-						if (getExtension(fl.getAbsolutePath()).equals("pdf") || getExtension(fl.getAbsolutePath()).equals("txt") || getExtension(fl.getAbsolutePath()).equals("epub"))
+						if (getExtension(fl.getAbsolutePath()).equals("pdf") || getExtension(fl.getAbsolutePath()).equals("txt"))
 						Utils.addBooks(new Book(fl.getName(), fl), Utils.rootItem);
 					}
 					// we set the variable to true when we release the mouse click
@@ -198,7 +194,7 @@ public class MainController {
 		return res;
 	}
 	private void themeItemHandler(ActionEvent event) {
-		Utils.changeTheme(Utils.PACKAGEDIR + ((MenuItem)event.getSource()).getText());
+		Utils.changeTheme("styles/"+((MenuItem)event.getSource()).getText());
 	}
 	
 	@FXML
@@ -248,7 +244,6 @@ public class MainController {
 					        else
 					        	url ="file:///"+tmp;
 					        engine.setJavaScriptEnabled(true);
-					        //ï¿½ stato un parto farlo funzionare ma ï¿½ andato
 					        //al posto di usare il path si convertono i byte del file in base64
 					        //e lo si da in pasto alla pagina web che gestisce tutto
 				        	byte[] data = null;
@@ -315,8 +310,8 @@ public class MainController {
 				return false;
 			}
 		};
-		File dir = new File(getClass().getResource("/formpackage").getPath());
-		if(dir.exists() && dir.isDirectory()) {
+		File dir = new File("styles");
+		if(dir.exists()) {
 			for(File f : dir.listFiles(ff)) {
 				themeMenu.getItems().add(createCustomItem(f.getName()));
 			}

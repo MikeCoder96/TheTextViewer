@@ -13,7 +13,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mainpackage.SceneHandler;
-import utilspackage.MainFormSettings;
 import utilspackage.Utils;
 import utilspackage.XmlHandler;
 
@@ -74,10 +73,8 @@ public class SceneHandler {
 		}
 		stage.setScene(mainscene);
 		//set stage size bounds
-		stage.setMinHeight(MainFormSettings.MINHEIGHT);
-		stage.setMinWidth(MainFormSettings.MINWIDTH);
-		//stage.setMaxHeight(MainFormSettings.MAXHEIGHT);
-		//stage.setMaxWidth(MainFormSettings.MAXWIDTH);
+		stage.setMinHeight(400);
+		stage.setMinWidth(600);
 	}
 
 	
