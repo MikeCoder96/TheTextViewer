@@ -2,6 +2,7 @@ package utilspackage;
 
 import java.util.Objects;
 
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TextField;
@@ -15,9 +16,12 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.util.Callback;
+import mainpackage.MainController;
+import mainpackage.SceneHandler;
 
 public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Book>> {
 	private enum DropType {INTO, REORDER};
@@ -104,7 +108,11 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
         cell.setOnDragOver((DragEvent event) -> dragOver(event, cell, treeView));
         cell.setOnDragDropped((DragEvent event) -> drop(event, cell, treeView));
         cell.setOnDragDone((DragEvent event) -> clearDropLocation());
-        
+        cell.setOnMouseClicked(event -> {
+        	if(!cell.isEmpty() && event.getButton().equals(MouseButton.PRIMARY)) {
+        		((MainController) SceneHandler.getInstance().getMainLoader().getController()).OpenText(cell.getTreeItem().getValue());
+        	}
+        });
         return cell;
     }
     

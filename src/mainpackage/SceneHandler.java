@@ -30,6 +30,9 @@ public class SceneHandler {
 	public Stage getDialogStage() {
 		return notfounddialog;
 	}
+	public FXMLLoader getMainLoader() {
+		return mainloader;
+	}
 	
 	public static SceneHandler getInstance() {
 		  if (SH == null)

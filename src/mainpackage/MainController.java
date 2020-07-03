@@ -42,7 +42,6 @@ public class MainController {
 	@FXML
 	private Menu themeMenu;
 	
-    volatile String base64;
     @FXML
     private WebView webView;	
 	@FXML
@@ -183,9 +182,9 @@ public class MainController {
 		treeView1.setCellFactory(new CellFactoryAdvanced());
 		// TODO try to understand how to handle this but with filterabletreeitem so it
 		// does not cause exceptions
-		treeView1.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			OpenText(newValue.getValue());
-		});
+		//treeView1.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+		//	OpenText(newValue.getValue());
+		//});
 	}
 
 	private MenuItem createCustomItem(String text) {
@@ -202,7 +201,7 @@ public class MainController {
 		Utils.addCategory(Utils.rootItem);
 	}
 
-	String getExtension(String filename) {
+	static String getExtension(String filename) {
 		String extension = "";
 
 		int i = filename.lastIndexOf('.');
@@ -213,7 +212,7 @@ public class MainController {
 		return null;
 	}
 	
-	void OpenText(Book b) {
+	public void OpenText(Book b) {
 		if (textTask != null && textTask.isRunning()) {
 			textTask.cancel();
 		}
@@ -249,7 +248,7 @@ public class MainController {
 				        	byte[] data = null;
 							try {					
 								data = Files.readAllBytes(b.getPath().toPath());
-					        	base64 = Base64.getEncoder().encodeToString(data);  
+					        	String base64 = Base64.getEncoder().encodeToString(data);  
 					        	engine.load(url + "?file=data:application/pdf;base64," + base64);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
