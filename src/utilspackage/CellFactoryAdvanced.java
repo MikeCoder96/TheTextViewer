@@ -2,7 +2,6 @@ package utilspackage;
 
 import java.util.Objects;
 
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TextField;

@@ -7,6 +7,7 @@ import org.jdom2.JDOMException;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -44,7 +45,8 @@ public class SceneHandler {
 		stage = paramStage;
 		stage.hide();
 		setMainScene();
-		stage.setTitle("TheTextViewer");
+		stage.getIcons().add(new Image(getClass().getResource("/formpackage/icon.png").toExternalForm()));
+		stage.setTitle("The Text Viewer (BETA EDITION V0.1)");
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
 			@Override
