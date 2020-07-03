@@ -240,26 +240,26 @@ public class MainController {
 							webView.setVisible(true);
 					        WebEngine engine = webView.getEngine();
 					        //String url = getClass().getResource("/home/redin0s/Desktop/pdfreader/web/viewer.html").toExternalForm();
-					        String tmp = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
-					        tmp = tmp.substring(0, tmp.lastIndexOf('/'));
-					        String url ="file://"+tmp+"/pdfreader/web/viewer.html";
+					        
+					        String tmp = new File("pdfreader/web/viewer.html").getAbsolutePath();
+					        String url;
+					        if(tmp.startsWith("/"))
+					        	url ="file://"+tmp;
+					        else
+					        	url ="file:///"+tmp;
 					        engine.setJavaScriptEnabled(true);
 					        //ï¿½ stato un parto farlo funzionare ma ï¿½ andato
 					        //al posto di usare il path si convertono i byte del file in base64
 					        //e lo si da in pasto alla pagina web che gestisce tutto
-
-					        Runnable task = () -> {    	
-					        	byte[] data = null;
-								try {					
-									data = Files.readAllBytes(b.getPath().toPath());
-						        	base64 = Base64.getEncoder().encodeToString(data);  
-						        	engine.load(url + "?file=data:application/pdf;base64," + base64);
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-					        };  
-					        task.run();	        
+				        	byte[] data = null;
+							try {					
+								data = Files.readAllBytes(b.getPath().toPath());
+					        	base64 = Base64.getEncoder().encodeToString(data);  
+					        	engine.load(url + "?file=data:application/pdf;base64," + base64);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}     
 						}
 						/*else if (extension.equals("epub"))
 						{
