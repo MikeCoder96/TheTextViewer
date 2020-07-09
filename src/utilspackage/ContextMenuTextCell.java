@@ -2,7 +2,6 @@ package utilspackage;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -41,7 +40,10 @@ public class ContextMenuTextCell extends ContextMenu{
 								Desktop.getDesktop().open(object.getItem().getPath());
 							}
 							catch (IOException e) {
-								e.printStackTrace();
+								Alert alert = new Alert(AlertType.ERROR);
+								alert.setTitle("ERROR");
+								alert.setHeaderText("There was an error when opening external app");
+								alert.showAndWait();
 							}
 						}).start();
 					}
@@ -67,33 +69,30 @@ public class ContextMenuTextCell extends ContextMenu{
 			public void handle(ActionEvent event) {
 				String title = object.getItem().getTitle();
 				FilterableTreeItem<Book> toDelete = (FilterableTreeItem<Book>) object.getTreeItem();
-				AtomicBoolean isDeleted = new AtomicBoolean();
+				Alert conf = new Alert(AlertType.CONFIRMATION);
 				if(object.getItem().getPath() == null) {
-					Alert conf = new Alert(AlertType.CONFIRMATION);
 					conf.setTitle("Deleting category");
 					conf.setHeaderText("You are deleting the category " + title + " and its content, are you sure?");
-					conf.showAndWait().ifPresent(rs -> {
-					    if (rs == ButtonType.OK) {
-					    	isDeleted.set(((FilterableTreeItem<Book>)toDelete.getParent()).getInternalChildren().remove(toDelete));
-					    }
-					});
 				}
 				else {
-					isDeleted.set(((FilterableTreeItem<Book>)toDelete.getParent()).getInternalChildren().remove(toDelete));
+					conf.setTitle("Deleting book");
+					conf.setHeaderText("You are deleting the book " + title + ", are you sure?");
 				}
-				if (isDeleted.get())
-				{
-					Alert alert = new Alert(AlertType.INFORMATION);
-					if(object.getItem().getPath() == null) {
-						alert.setTitle("Category deleted!");
-						alert.setHeaderText("The category: " + title + " was deleted!");
-					}
-					else {
-						alert.setTitle("Book Deleted!");
-						alert.setHeaderText("The book: " + title + " was deleted!");
-					}
-					alert.showAndWait();
-				}
+				conf.showAndWait().ifPresent(rs -> {
+				    if (rs == ButtonType.OK) {
+				    	Utils.callremoveEntry(toDelete);;
+				    	Alert alert = new Alert(AlertType.INFORMATION);
+						if(object.getItem().getPath() == null) {
+							alert.setTitle("Category deleted!");
+							alert.setHeaderText("The category: " + title + " was deleted!");
+						}
+						else {
+							alert.setTitle("Book Deleted!");
+							alert.setHeaderText("The book: " + title + " was deleted!");
+						}
+						alert.showAndWait();
+				    }
+				});
 			}
 		});
 		this.getItems().add(delete);

@@ -84,6 +84,7 @@ public class XmlHandler {
 	// initialize book loading from file
 	public static void callRead(FilterableTreeItem<Book> root, File f) throws JDOMException, IOException {
 		root.getInternalChildren().clear();
+		Utils.libri.clear();
 		doc = (Document) new SAXBuilder().build(f);
 		Element e = doc.getRootElement();
 		if (e.getName().contentEquals(LIBRARY)) {
@@ -135,7 +136,9 @@ public class XmlHandler {
 	// save current settings, called on program close
 	public static void saveSettings() throws JDOMException, IOException {
 		doc = (Document) new SAXBuilder().build(new File(SETTINGS));
-		doc.getRootElement().setAttribute(STYLE, SceneHandler.getInstance().getMainScene().getStylesheets().get(0));
+		String tmp = SceneHandler.getInstance().getMainScene().getStylesheets().get(0);
+		tmp = tmp.substring(tmp.lastIndexOf("styles"));
+		doc.getRootElement().setAttribute(STYLE, tmp);
 		out.output(doc, new FileOutputStream(SETTINGS));
 	}
 }

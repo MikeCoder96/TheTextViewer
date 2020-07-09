@@ -25,7 +25,11 @@ public class Main extends Application {
 			}
 			SceneHandler.getInstance().init(primaryStage);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Alert inst = new Alert(AlertType.ERROR);
+			inst.setTitle("ERROR");
+			inst.setHeaderText("Something stange has occurred");
+			inst.showAndWait();
+			System.exit(-1);
 		}
 	}
 	

@@ -56,7 +56,7 @@ public class SceneHandler {
 						XmlHandler.callLocalSave(Utils.rootItem);
 					} catch (JDOMException | IOException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 			}
 		});
@@ -74,7 +74,7 @@ public class SceneHandler {
 			Utils.changeTheme(XmlHandler.loadSettings());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		stage.setScene(mainscene);
 		//set stage size bounds
@@ -94,7 +94,7 @@ public class SceneHandler {
 			notfounddialog.setScene(scene);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		notfounddialog.initModality(Modality.APPLICATION_MODAL);
 		notfounddialog.setOnCloseRequest(new EventHandler<WindowEvent>() {

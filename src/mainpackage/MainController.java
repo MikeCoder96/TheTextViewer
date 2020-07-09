@@ -63,6 +63,7 @@ public class MainController {
 	
 	private FileChooser bookfc;
 	private FileChooser libfc;
+	private Book currentBook;
 	
 	@FXML
 	void onOpenFile(ActionEvent event) {
@@ -71,6 +72,7 @@ public class MainController {
 	        bookfc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Book Format", "*.txt", "*.pdf", "*.epub"));
 		}
 		List<File> files = bookfc.showOpenMultipleDialog(null);
+		if(files != null && files.size()>0)
 		for(File file: files) {
 			if (file != null && file.exists()) {
 				Utils.addBooks(new Book(file.getName(),file), Utils.rootItem);
@@ -87,7 +89,11 @@ public class MainController {
 			XmlHandler.callRead(Utils.rootItem,tmp);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("ERROR");
+			alert.setHeaderText("there was an error in loading saved library");
+			alert.showAndWait();
 		}
 	}
 	
@@ -111,7 +117,10 @@ public class MainController {
 		try {
 			XmlHandler.callSave(Utils.rootItem,tmp);
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			Alert newalert = new Alert(AlertType.ERROR);
+			newalert.setTitle("There was an error while saving");
+			newalert.showAndWait();
 		}
 	}
 	
@@ -213,6 +222,10 @@ public class MainController {
 	}
 	
 	public void OpenText(Book b) {
+		if(b == currentBook)
+			return;
+		else
+			currentBook = b;
 		if (textTask != null && textTask.isRunning()) {
 			textTask.cancel();
 		}
@@ -222,10 +235,10 @@ public class MainController {
 				protected Void call() throws Exception {
 					try {
 						//File toShow = Utils.getBookFromTitle(title);
-						File toShow = b.getPath();
+						File toShow = currentBook.getPath();
 						if (toShow == null)
 							return null;
-						String extension = getExtension(b.getPath().getAbsolutePath());
+						String extension = getExtension(toShow.getAbsolutePath());
 						
 						webView.setVisible(false);
 						if(tfv != null)
@@ -246,13 +259,17 @@ public class MainController {
 					        //al posto di usare il path si convertono i byte del file in base64
 					        //e lo si da in pasto alla pagina web che gestisce tutto
 				        	byte[] data = null;
-							try {					
-								data = Files.readAllBytes(b.getPath().toPath());
+							try {		
+								data = Files.readAllBytes(toShow.toPath());
 					        	String base64 = Base64.getEncoder().encodeToString(data);  
 					        	engine.load(url + "?file=data:application/pdf;base64," + base64);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
+								Alert ant = new Alert(AlertType.ERROR);
+								ant.setTitle("ERROR");
+								ant.setHeaderText("there was an error while loading pdf");
+								ant.showAndWait();
 							}     
 						}
 						/*else if (extension.equals("epub"))
@@ -291,7 +308,11 @@ public class MainController {
 						}
 
 					} catch (Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
+						Alert newalert = new Alert(AlertType.ERROR);
+						newalert.setTitle("ERROR");
+						newalert.setHeaderText("There was an error while opening the file");
+						newalert.showAndWait();
 					}
 					return null;
 				}
@@ -329,10 +350,18 @@ public class MainController {
 						XmlHandler.callLocalSave(Utils.rootItem);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						Alert newalert = new Alert(AlertType.ERROR);
+						newalert.setTitle("There was an error while saving");
+						newalert.showAndWait();
 					}
 			    }
 			});
+		}
+	}
+	public void checkDeleted(Book b) {
+		if(currentBook == b) {
+			webView.setVisible(false);
+			tfv.setVisible(false);
 		}
 	}
 }

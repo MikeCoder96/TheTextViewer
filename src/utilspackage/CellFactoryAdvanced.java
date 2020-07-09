@@ -47,7 +47,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
                     @Override
                     public void handle(KeyEvent t) {
                     	//submit edit with ENTER cancel with ESCAPE
-                        if (t.getCode() == KeyCode.ENTER) {
+                        if (t.getCode() == KeyCode.ENTER && !textField.getText().contentEquals("")) {
                         	Book tmp = new Book(textField.getText(),getItem().getPath());
                         	commitEdit(tmp);
                         } else if (t.getCode() == KeyCode.ESCAPE) {
@@ -108,7 +108,7 @@ public class CellFactoryAdvanced implements Callback<TreeView<Book>, TreeCell<Bo
         cell.setOnDragDropped((DragEvent event) -> drop(event, cell, treeView));
         cell.setOnDragDone((DragEvent event) -> clearDropLocation());
         cell.setOnMouseClicked(event -> {
-        	if(!cell.isEmpty() && event.getButton().equals(MouseButton.PRIMARY)) {
+        	if(!cell.isEmpty() && event.getButton().equals(MouseButton.PRIMARY) && cell.getTreeItem().getValue().getPath() != null) {
         		((MainController) SceneHandler.getInstance().getMainLoader().getController()).OpenText(cell.getTreeItem().getValue());
         	}
         });
